@@ -1,0 +1,17 @@
+;; -*- mode: Lisp; -*-
+
+(setq prj-version nil)
+
+(setq prj-list
+      '(("up-apikeys" "/Users/russellsimpkins/projects/nytimes/user-prefs/up-apikeys")
+        ("user-prefs" "~/projects/nytimes/user-prefs")
+        ("eproject-0.3" "/Users/russellsimpkins/emacs.d/elpa/eproject-0.3/")))
+
+(setq prj-last-open nil)
+
+(setq prj-frame-pos
+      '((top . 22)
+        (left . 2)
+        (width . 128)
+        (height . 30)))
+

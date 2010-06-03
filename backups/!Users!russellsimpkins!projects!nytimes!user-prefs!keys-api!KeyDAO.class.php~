@@ -1,0 +1,129 @@
+<?php
+/**
+ * A class to provide basic DAO features. Our storage is relatively
+ * straight forward, see at the bottom
+ */
+class NYTD_UserPrefs_APIKeys_DAO extends NYTD_UserPrefs_APIKeys_BaseDAO {
+
+  
+  /**
+   * This function will create a new account for you. It assumes that
+   * you know how you want to create your private and public key pairs.
+   *
+   * @param - privateKey - String - some private key
+   * @param - publicKey - String - some public key
+   * @return - Hash - result['status'] - 1 for success 0 for failure
+   *                  result['data']['private-token'] - the token you will use in the future to hash with the hour
+   *                  result['data']['key-id'] - the key you will pass
+   *                  result['data']['expires-on'] - mysql date format when this account will expire
+   */
+  public function createAccount( &$privateKey, &$publicKey ) {
+
+    $expiresOn = $this->calculateExpiresDate();
+    $createdOn = date('Y-m-d H:i:s',time());
+    $sql = "call NYT_UserProfile_APIKeys_Insert (%i,%s,%s,%s,%s,%s)";
+    $tries = 0;
+    while($tries++ < 5) {
+      $keyId        = $this->generateKeyId();
+      $privateToken = $this->generatePrivateToken();
+      $params       = array($keyId,$privateKey,$publicKey,$privateToken,$createdOn,$expiresOn);
+      $dbresult     = $this->executeDBQuery($sql,$params);
+
+      // a success should send us back the pk.
+      if (!empty($dbresult) && !empty($dbresult['account_id'])) {
+        break;
+      }
+    }
+
+    if (!empty($dbresult) && !empty($dbresult['status'])) {
+      $result['status'] = 1;
+      $result['data']['private-token']=$privateToken;
+      $result['data']['key-id']=$keyId;
+      $result['data']['expires-on']=$expiresOn;
+    } else {
+      $result['status'] = 0;
+      $result['reason'] = "Unable to create an account. Please try again at a later date.";
+    }
+    return $result;
+  }
+  
+  /**
+   * This function will return the public key and the private token for 
+   * a given keyId and the account has not expired.
+   *
+   * @param keyId - String/Integer - a valid key
+   * @return Hash - result['status'] - 1 for success 0 for failure
+   *                result['private-token'] - String - the private token
+   *                result['public-key'] - String - this account's public key
+   */
+  public function getAccountPublicAndToken( &$keyId ) {
+    $sql = "call NYT_UserProfile_APIKeys_SelectBasic(?)";
+    $params = array($keyId);
+    $result = $this->executeDBQuery($sql,$params);
+    $retval = array();
+    if (!empty($result)) {
+      // this must have worked
+      $retval['status'] = 1;
+      $retval['private-token'] = $result['data']['private_token'];
+      $retval['public-key'] = $result['data']['public_key'];
+    } else {
+      $retval['status'] = 0;
+      $retval['reason'] = "Unable to get any data with key: $keyId";
+    }
+    return $retval;
+  }
+
+  /**
+   * Get the expire date as unix time for the key passed in
+   *
+   * @param keyId int - the key for the account
+   * @return Hash result['status'] - 1 for success 0 for failure
+   *              result['expires-on'] - int - the expires date
+   *
+   */
+  public function fetchExpiresDate( @$keyId ) {
+    if (empty($keyId)) return null;
+    $sql = "call NYT_UserProfile_APIKeys_SelectExpires(%i)";
+    $retval = array();
+    $result = $this->executeDBQuery($sql);
+    if (!empty($result)) {
+      array_shift($result);
+      // this must have worked
+      $retval['status'] = 1;
+      $retval['expires-on'] = strtotime($result['expires_on']);
+    } else {
+      $retval['status'] = 0;
+      $retval['reason'] = "Unable to get any data with key: $keyId";
+    }
+    return $retval;
+  }
+
+  /**
+   * Create a mysql date for when this key will expire
+   *
+   * @return String - formatted for mysql date as string
+   */
+  private function calculateExpiresDate() {
+    $daysOut=86400 * KEY_GOOD_FOR_DAYS;
+    $dateTime = time() + $daysOut;
+    return date('Y-m-d H:i:s',$dateTime);
+  }
+
+  /**
+   * We need to generate a random key that is best suited to be numeric
+   * Given that it is generated we will have to create an account to secure
+   * the key is then taken before updates
+   */
+  private function generateKeyId() {
+    return crc32(rand(0,time()));
+  }
+
+  /**
+   * Generate a pseudo random secret token
+   * 
+   * @return String - md5 you
+   */
+  private function generatePrivateToken() {
+    return md5(rand(0,time()));
+  }
+}

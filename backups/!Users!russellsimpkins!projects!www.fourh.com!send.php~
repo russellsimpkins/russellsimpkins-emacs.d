@@ -1,0 +1,152 @@
+<?php
+// Website Contact Form Generator 
+// http://www.tele-pro.co.uk/scripts/contact_form/ 
+// This script is free to use as long as you  
+// retain the credit link  
+
+// get posted data into local variables
+$EmailFrom = "no-reply@fourhundred.com";
+$EmailTo = "tony@fourhundred.com";
+$Subject = "Site mail!";
+$FirstName = Trim(stripslashes($_POST['FirstName'])); 
+$MiddleName = Trim(stripslashes($_POST['MiddleName'])); 
+$LastName = Trim(stripslashes($_POST['LastName'])); 
+$Title = Trim(stripslashes($_POST['Title'])); 
+$DateOfBirth = Trim(stripslashes($_POST['DateOfBirth'])); 
+$Gender = Trim(stripslashes($_POST['Gender'])); 
+$JobTitle = Trim(stripslashes($_POST['JobTitle'])); 
+$Company = Trim(stripslashes($_POST['Company'])); 
+$Street1 = Trim(stripslashes($_POST['Street1'])); 
+$City = Trim(stripslashes($_POST['City'])); 
+$Email = Trim(stripslashes($_POST['Email'])); 
+$Tel = Trim(stripslashes($_POST['Tel'])); 
+$Mobile = Trim(stripslashes($_POST['Mobile'])); 
+$WorkTel = Trim(stripslashes($_POST['WorkTel'])); 
+$How = Trim(stripslashes($_POST['How'])); 
+
+// validation
+$validationOK=true;
+if (Trim($FirstName)=="") $validationOK=false;
+if (Trim($LastName)=="") $validationOK=false;
+if (Trim($DateOfBirth)=="") $validationOK=false;
+if (Trim($Street1)=="") $validationOK=false;
+if (Trim($City)=="") $validationOK=false;
+if (Trim($Email)=="") $validationOK=false;
+if (Trim($Tel)=="") $validationOK=false;
+if (!$validationOK) {
+  print "<meta http-equiv=\"refresh\" content=\"0;URL=error.html\">";
+  exit;
+}
+
+// prepare email body text
+$Body = "";
+$Body .= "First Name: ";
+$Body .= $FirstName;
+$Body .= "\n";
+$Body .= "Middle Name: ";
+$Body .= $MiddleName;
+$Body .= "\n";
+$Body .= "Last Name: ";
+$Body .= $LastName;
+$Body .= "\n";
+$Body .= "Title: ";
+$Body .= $Title;
+$Body .= "\n";
+$Body .= "Date Of Birth: ";
+$Body .= $DateOfBirth;
+$Body .= "\n";
+$Body .= "Gender: ";
+$Body .= $Gender;
+$Body .= "\n";
+$Body .= "Job Title: ";
+$Body .= $JobTitle;
+$Body .= "\n";
+$Body .= "Company: ";
+$Body .= $Company;
+$Body .= "\n";
+$Body .= "Street: ";
+$Body .= $Street1;
+$Body .= "\n";
+$Body .= "City: ";
+$Body .= $City;
+$Body .= "\n";
+$Body .= "Email: ";
+$Body .= $Email;
+$Body .= "\n";
+$Body .= "Tel: ";
+$Body .= $Tel;
+$Body .= "\n";
+$Body .= "Mobile: ";
+$Body .= $Mobile;
+$Body .= "\n";
+$Body .= "WorkTel: ";
+$Body .= $WorkTel;
+$Body .= "\n";
+$Body .= "How Did You Find Out About Us?: ";
+$Body .= $How;
+$Body .= "\n";
+
+$FirstName = preg_replace("/;/", "", $FirstName);
+$MiddleName = preg_replace("/;/", "", $MiddleName);
+$LastName = preg_replace("/;/", "", $LastName);
+$Title = preg_replace("/;/", "", $Title);
+$DateOfBirth = preg_replace("/;/", "", $DateOfBirth);
+$Gender = preg_replace("/;/", "", $Gender);
+$JobTitle = preg_replace("/;/", "", $JobTitle);
+$Company = preg_replace("/;/", "", $Company);
+$Street1 = preg_replace("/;/", "", $Street1);
+$City = preg_replace("/;/", "", $City);
+$Email = preg_replace("/;/", "", $Email);
+$Tel = preg_replace("/;/", "", $Tel);
+$Mobile = preg_replace("/;/", "", $Mobile);
+$WorkTel = preg_replace("/;/", "", $WorkTel);
+
+include_once("./cms/inc/Utility.class.php");
+$util = new Utility();
+$sql = "INSERT INTO application (
+  first_name,
+  middle_initial,
+  last_name,
+  my_title,
+  dob,
+  gender,
+  job_title,
+  company_name,
+  street,
+  city,
+  email,
+  telephone,
+  mobile_phone,
+  work_phone
+) VALUES (
+" . $util->wrap($FirstName) . ",
+" . $util->wrap($MiddleName) . ",
+" . $util->wrap($LastName) . ",
+" . $util->wrap($Title) . ",
+" . $util->wrap($DateOfBirth) . ",
+" . $util->wrap($Gender) . ",
+" . $util->wrap($JobTitle) . ",
+" . $util->wrap($Company) . ",
+" . $util->wrap($Street1) . ",
+" . $util->wrap($City) . ",
+" . $util->wrap($Email) . ",
+" . $util->wrap($Tel) . ",
+" . $util->wrap($Mobile) . ",
+" . $util->wrap($WorkTel) . ")";
+
+// update the db
+$success = $util->exec($sql);
+
+if ($success >= 0) {
+   // send email 
+   $success = mail($EmailTo, $Subject, $Body, "From: <$EmailFrom>");
+} else {
+   $success = false;
+}
+// redirect to success page 
+if ($success) {
+  print "<meta http-equiv=\"refresh\" content=\"0;URL=ok.html\">";
+} else {
+  print "<meta http-equiv=\"refresh\" content=\"0;URL=error.html\">";
+}
+?>

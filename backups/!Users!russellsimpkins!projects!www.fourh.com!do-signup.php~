@@ -1,0 +1,317 @@
+<?php
+/**
+ * Russell Simpkins Software License
+ *
+ * Copyright Russell Simpkins 2010.  All rights reserved.
+ * THIS PROGRAM IS AN UNPUBLISHED WORK AND TRADE SECRET OF THE COPYRIGHT HOLDER,
+ * AND DISTRIBUTED ONLY UNDER RESTRICTION.
+ *
+ * No part of this program may be used, installed, displayed, reproduced,
+ * distributed or modified without the express written consent of the copyright
+ * holder.
+ *
+ * EXCEPT AS EXPLICITLY STATED IN A WRITTEN AGREEMENT BETWEEN THE PARTIES,
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL Russell Simpkins OR
+ * ITS CONTRIBUTORS OR EMPLOYEES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ * @author <a href='mailto:russellsimpkins@hotmail.com'>Russell Simpkins</a>
+ * 
+ */
+$path = "./cms/";
+include_once($path . "inc/global.inc.php");
+$staticPath = BASE_SITE_PATH . "cms/";
+$bad = true;
+$vars = array_merge($_GET,$_POST);
+if (  !empty($vars['first_name']) &&  !empty($vars['middle_initial']) &&  !empty($vars['last_name']) &&  !empty($vars['my_title']) &&  !empty($vars['dob']) &&  !empty($vars['gender']) &&  !empty($vars['job_title']) &&  !empty($vars['company_name']) &&  !empty($vars['p_first_name']) &&  !empty($vars['p_middle_initial']) &&  !empty($vars['p_last_name']) &&  !empty($vars['p_my_title']) &&  !empty($vars['p_dob']) &&  !empty($vars['p_gender']) &&  !empty($vars['p_job_title']) &&  !empty($vars['p_company_name']) &&  !empty($vars['street']) &&  !empty($vars['city']) &&  !empty($vars['state']) &&  !empty($vars['zipcode']) &&  !empty($vars['mobile_phone']) &&  !empty($vars['work_phone']) &&  !empty($vars['email']) &&  !empty($vars['passwd']) &&  !empty($vars['p_street']) &&  !empty($vars['p_city']) &&  !empty($vars['p_state']) &&  !empty($vars['p_zipcode']) &&  !empty($vars['p_mobile_phone']) &&  !empty($vars['p_work_phone']) &&  !empty($vars['p_email']) &&  !empty($vars['cardtype_ops']) &&  !empty($vars['credit_card_number']) &&  !empty($vars['security_code']) &&  !empty($vars['exp_day']) &&  !empty($vars['exp_month']) &&  !empty($vars['exp_year']) &&  !empty($vars['billing_address']) ) {
+  $bad = false;
+}
+
+if ($bad) {
+  header("location: signup.php?m=1");
+  exit;
+}
+
+require_once($path . "classes/Application.class.php");
+$vars = array_merge($_GET, $_POST);
+$objApplication = new Application();
+$updatesql = array();
+if ( !empty( $vars['application_id'] ) ) {
+    $objApplication->loadById( $vars['application_id'] );
+    if ( !empty( $vars['duplicate'] ) ) $objApplication->setApplicationId("");
+} else {
+	$objApplication->save();
+}
+$parts = array(FILE_UL_PATH, 'application',$objApplication->getApplicationId() );
+$checkpath = "";
+foreach ($parts as $a=>$part) {
+	$checkpath .= $part . "/";
+	if (!file_exists($checkpath)) {
+		mkdir($checkpath, 0777);
+	}
+}
+$objApplication->setFirstName( ( empty( $vars['first_name'] ) ) ? "" : stripslashes( trim( $vars['first_name'] ) ) );
+$objApplication->setMiddleInitial( ( empty( $vars['middle_initial'] ) ) ? "" : stripslashes( trim( $vars['middle_initial'] ) ) );
+$objApplication->setLastName( ( empty( $vars['last_name'] ) ) ? "" : stripslashes( trim( $vars['last_name'] ) ) );
+$objApplication->setMyTitle( ( empty( $vars['my_title'] ) ) ? "" : stripslashes( trim( $vars['my_title'] ) ) );
+$objApplication->setDob( ( empty( $vars['dob'] ) ) ? "" : stripslashes( trim( $vars['dob'] ) ) );
+$objApplication->setGender( ( empty( $vars['gender'] ) ) ? "" : stripslashes( trim( $vars['gender'] ) ) );
+$objApplication->setJobTitle( ( empty( $vars['job_title'] ) ) ? "" : stripslashes( trim( $vars['job_title'] ) ) );
+$objApplication->setCompanyName( ( empty( $vars['company_name'] ) ) ? "" : stripslashes( trim( $vars['company_name'] ) ) );
+$objApplication->setPFirstName( ( empty( $vars['p_first_name'] ) ) ? "" : stripslashes( trim( $vars['p_first_name'] ) ) );
+$objApplication->setPMiddleInitial( ( empty( $vars['p_middle_initial'] ) ) ? "" : stripslashes( trim( $vars['p_middle_initial'] ) ) );
+$objApplication->setPLastName( ( empty( $vars['p_last_name'] ) ) ? "" : stripslashes( trim( $vars['p_last_name'] ) ) );
+$objApplication->setPMyTitle( ( empty( $vars['p_my_title'] ) ) ? "" : stripslashes( trim( $vars['p_my_title'] ) ) );
+$objApplication->setPDob( ( empty( $vars['p_dob'] ) ) ? "" : stripslashes( trim( $vars['p_dob'] ) ) );
+$objApplication->setPGender( ( empty( $vars['p_gender'] ) ) ? "" : stripslashes( trim( $vars['p_gender'] ) ) );
+$objApplication->setPJobTitle( ( empty( $vars['p_job_title'] ) ) ? "" : stripslashes( trim( $vars['p_job_title'] ) ) );
+$objApplication->setPCompanyName( ( empty( $vars['p_company_name'] ) ) ? "" : stripslashes( trim( $vars['p_company_name'] ) ) );
+$objApplication->setStreet( ( empty( $vars['street'] ) ) ? "" : stripslashes( trim( $vars['street'] ) ) );
+$objApplication->setCity( ( empty( $vars['city'] ) ) ? "" : stripslashes( trim( $vars['city'] ) ) );
+$objApplication->setContactLastName( ( empty( $vars['contact_last_name'] ) ) ? "" : stripslashes( trim( $vars['contact_last_name'] ) ) );
+$objApplication->setState( ( empty( $vars['state'] ) ) ? "" : stripslashes( trim( $vars['state'] ) ) );
+$objApplication->setZipcode( ( empty( $vars['zipcode'] ) ) ? "" : stripslashes( trim( $vars['zipcode'] ) ) );
+$objApplication->setEmail( ( empty( $vars['email'] ) ) ? "" : stripslashes( trim( $vars['email'] ) ) );
+$objApplication->setTelephone( ( empty( $vars['telephone'] ) ) ? "" : stripslashes( trim( $vars['telephone'] ) ) );
+$objApplication->setMobilePhone( ( empty( $vars['mobile_phone'] ) ) ? "" : stripslashes( trim( $vars['mobile_phone'] ) ) );
+$objApplication->setWorkPhone( ( empty( $vars['work_phone'] ) ) ? "" : stripslashes( trim( $vars['work_phone'] ) ) );
+$objApplication->setPStreet( ( empty( $vars['p_street'] ) ) ? "" : stripslashes( trim( $vars['p_street'] ) ) );
+$objApplication->setPCity( ( empty( $vars['p_city'] ) ) ? "" : stripslashes( trim( $vars['p_city'] ) ) );
+$objApplication->setPContactLastName( ( empty( $vars['p_contact_last_name'] ) ) ? "" : stripslashes( trim( $vars['p_contact_last_name'] ) ) );
+$objApplication->setPState( ( empty( $vars['p_state'] ) ) ? "" : stripslashes( trim( $vars['p_state'] ) ) );
+$objApplication->setPZipcode( ( empty( $vars['p_zipcode'] ) ) ? "" : stripslashes( trim( $vars['p_zipcode'] ) ) );
+$objApplication->setPEmail( ( empty( $vars['p_email'] ) ) ? "" : stripslashes( trim( $vars['p_email'] ) ) );
+$objApplication->setPMobilePhone( ( empty( $vars['p_mobile_phone'] ) ) ? "" : stripslashes( trim( $vars['p_mobile_phone'] ) ) );
+$objApplication->setPWorkPhone( ( empty( $vars['p_work_phone'] ) ) ? "" : stripslashes( trim( $vars['p_work_phone'] ) ) );
+$objApplication->setCardtypeOps( ( empty( $vars['cardtype_ops'] ) ) ? "" : stripslashes( trim( $vars['cardtype_ops'] ) ) );
+$objApplication->setCreditCardNumber( ( empty( $vars['credit_card_number'] ) ) ? "" : stripslashes( trim( $vars['credit_card_number'] ) ) );
+$objApplication->setSecurityCode( ( empty( $vars['security_code'] ) ) ? "" : stripslashes( trim( $vars['security_code'] ) ) );
+$objApplication->setExpDay( ( empty( $vars['exp_day'] ) ) ? "" : stripslashes( trim( $vars['exp_day'] ) ) );
+$objApplication->setExpMonth( ( empty( $vars['exp_month'] ) ) ? "" : stripslashes( trim( $vars['exp_month'] ) ) );
+$objApplication->setExpYear( ( empty( $vars['exp_year'] ) ) ? "" : stripslashes( trim( $vars['exp_year'] ) ) );
+$objApplication->setBillingAddress( ( empty( $vars['billing_address'] ) ) ? "" : stripslashes( trim( $vars['billing_address'] ) ) );
+if ( !empty( $vars['passwd'] ) ) {
+    $objApplication->setPasswd( md5( stripslashes( trim( $vars['passwd'] ) ) ) );
+}
+if ( !empty($vars['delete_picture_filename']) ) {
+    // remove the old filename.
+    if (!empty($objApplication->pictureFilename))
+        unlink( FILE_UL_PATH . 'application/' . $objApplication->getApplicationId() . '/' . $objApplication->pictureFilename );
+    array_push( $updatesql, "update application set picture_filename = null where picture_filename = " . $objApplication->util->wrap( $objApplication->getPictureFilename() ) );
+    $objApplication->setPictureFilename("");
+}
+if (!empty($_FILES['new_picture_filename']['tmp_name'])) {
+    $uploadfile = FILE_UL_PATH. 'application/' . $objApplication->getApplicationId() . '/' . $_FILES['new_picture_filename']['name'];
+    $index=0;
+    while ( file_exists($uploadfile) ) {
+        if ( $_FILES['new_picture_filename']['name'] == $objApplication->getPictureFilename() ) {
+            unlink( FILE_UL_PATH . 'application/' . $objApplication->getApplicationId() . '/' . $objApplication->getPictureFilename() );
+            break;
+        } else {
+            $uploadfile = FILE_UL_PATH . 'application/' . $objApplication->getApplicationId() . '/' . $index++ . $_FILES['new_picture_filename']['name'];
+        }
+    }
+    if ( !move_uploaded_file($_FILES['new_picture_filename']['tmp_name'], $uploadfile)) {
+       $errorMessage = "Problem trying to upload the pictureFilename";
+    } else {
+		@chmod($uploadfile, 0775);
+		@chown($uploadfile, FILEGRP);
+		@chgrp($uploadfile, FILEUSR);
+	}
+    $objApplication->setPictureFilename( ( empty( $_FILES['new_picture_filename'] ) ) ? "" : substr($uploadfile,(strrpos($uploadfile,"/")+1)));
+} elseif ( !empty( $vars['picture_filename'] ) ) {
+    $objApplication->setPictureFilename( $vars['picture_filename'] );
+} elseif ( empty( $vars['picture_filename'] ) ) {
+    $objApplication->setPictureFilename( "" );
+}
+
+
+if ( isset( $vars['delete'] ) ) {
+    $worked = $objApplication->delete();
+} else {
+    $type="";
+    if ( !empty( $objApplication->applicationId ) ) {
+        $worked = $objApplication->update();
+        $msg = "Your updates have been saved.";
+        if ( !empty( $updatesql ) ) {
+            foreach ( $updatesql as $sql ) {
+                $objApplication->util->exec( $sql );
+            }
+        }
+    } else {
+        $worked = $objApplication->save();
+        $msg = "Thank you for creating your member profile.";
+    }
+}
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type"
+    content="text/html; charset=utf-8" />
+    <title>Four Hundred</title>
+    <link rel="shortcut icon" href="images/favicon.ico" />
+    <link href="stylesheets/global.css" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/forms.css" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/facebox.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="javascripts/jquery.js"></script>
+    <script type="text/javascript" src="javascripts/facebox.js"></script>
+    <script type="text/javascript" src="javascripts/drop-down-menu.js"></script>
+    <script type="text/javascript" src="javascripts/si.files.js"></script>
+    <script type="text/javascript" src="javascripts/custom-form-elements.js"></script>
+    <script type="text/javascript" src="javascripts/watermark.js"></script>
+    <script type="text/javascript">$().ready(function(){
+    $("#username").Watermark("Username","#333");
+    $("#password").Watermark("Password","#333");
+    $("#username2").Watermark("Username","#333");
+    $("#password2").Watermark("Password","#333"); });</script>
+    <!--[if lt IE 7]>
+    <script type="text/javascript" src="javascripts/unitpngfix.js"></script>
+    <![endif]-->
+    <script src="Scripts/AC_RunActiveContent.js"
+    type="text/javascript"></script>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+    $('a[rel*=facebox]').facebox({ loading_image :
+    'images/loading.gif', close_image : 'images/closelabel.gif' })
+    })</script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h1>
+          <a href="index2.html">Four Hundred the BIGGEST concierge
+          service</a>
+        </h1>
+        <div id="userPanel">
+          <form action="" method="get">
+            <input name="username" type="text" id="username" />
+            <input name="password" type="password" id="password"
+            style="margin-left: 5px;" />
+            <input type="submit" id="loginBtn" name="loginBtn" />
+          </form>
+        </div>
+      </div>
+      <!--end of header-->
+      <div id="nav">
+        <ul>
+          <li>
+            <a href="about.html" class="navAbout">About Us</a>
+            <ul style="left: 37px;">
+              <li>
+                <a href="heritage.html">Heritage</a>
+              </li>
+              <li>
+                <a href="why.html">'Why Four Hundred'</a>
+              </li>
+              <li>
+                <a href="partners.html">Partners</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="restaurants.html" class="navRestaurant">
+            Restaurant</a>
+            <ul style="left: 34px;">
+              <li>Famished?</li>
+            </ul>
+          </li>
+          <li>
+            <a href="nightlife.html" class="navNightlife">
+            Nightlife</a>
+            <ul style="left: 26px;">
+              <li>Parched?</li>
+            </ul>
+          </li>
+          <li>
+            <a href="travel.html" class="navTravel">Travel</a>
+            <ul style="left: -5px;">
+              <li>Going somewhere?</li>
+            </ul>
+          </li>
+          <li>
+            <a href="events.html" class="navEvents">Events</a>
+            <ul style="left: 7px;">
+              <li>At your service</li>
+            </ul>
+          </li>
+          <li>
+            <a href="wellness.html" class="navWellness">
+            Wellness</a>
+            <ul style="left: 2px;">
+              <li>Need of Pampering?</li>
+            </ul>
+          </li>
+          <li>
+            <a href="experiences.html" class="navExperiences">
+            Experiences</a>
+            <ul style="left: 38px;">
+              <li>Be there</li>
+            </ul>
+          </li>
+          <li>
+            <a href="newsPopup.html" rel="facebox"
+            class="navNewsletters">Newsletters</a>
+            <ul style="left: 24px;">
+              <li>Login to view</li>
+            </ul>
+          </li>
+          <li>
+            <a href="press.html" class="navPress">Press</a>
+          </li>
+          <li>
+            <a href="form.html" class="navBecome">Become a
+            Member</a>
+          </li>
+        </ul>
+      </div>
+      <!--end of nav-->
+      <div class="centerBoxForm">
+        <!-- ======================================= 1st Row =================================================== -->
+        <!-- ======================================= 2nd Row =================================================== -->
+        <!-- ======================================= 3rd Row =================================================== -->
+        <!-- ======================================= 4th Row =================================================== -->
+        <!-- ======================================= copy Row ================================================== -->
+      <p>
+  <?php if ($worked >= 0) { ?>
+  &nbsp;&nbsp;<strong><?=$msg?></strong>
+  <?php } else { ?>
+  There was an error. <br />
+  <?php } ?>
+      </p>
+      </div>
+      <!-- ========================================== footer =================================================== -->
+      <div id="footer">
+        <p class="lightgray">
+        <a href="contact.html">Contact</a>| 
+        <a href="privacypolicy.html" rel="facebox">Privacy
+        Policy</a>| 
+        <a href="#">Terms and Conditions</a>| 
+        <a href="codeofconduct.html" rel="facebox">Code of
+        Conduct</a></p>
+        <p>
+        <a href="about.html">About</a>| 
+        <a href="restaurants.html">Restaurants</a>| 
+        <a href="nightlife.html">Nightlife</a>| 
+        <a href="travel.html">Travel</a>| 
+        <a href="events.html">Events</a>| 
+        <a href="wellness.html">Wellness</a>| 
+        <a href="experiences.html">Experiences</a>| 
+        <a href="newsPopup.html" rel="facebox">Newsletter</a>| 
+        <a href="press.html">Press</a>| 
+        <a href="form.html">Become a Member</a></p>
+        <p class="darkgray">&#169;2010 Four Hundred | New York | Los Angeles</p>
+      </div>
+    </div>
+  </body>
+</html>

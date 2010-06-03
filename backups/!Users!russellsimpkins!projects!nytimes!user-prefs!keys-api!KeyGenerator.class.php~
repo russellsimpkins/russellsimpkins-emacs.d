@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * This class will provide key validation and generation.
+ */
+class KeyGenerator {
+  var $dao;
+
+  public function __constructor() {
+    $this->dao = new NYTD_UserPrefs_Keys_DAO();
+  }
+  
+  /**
+   * A method to check if the key exists
+   *
+   * @param keyId Integer a non-zero positive number
+   * @return boolean true if the account exists, else false
+   */
+  public function accountExists( &$keyId ) {
+    if (empty($this->dao)) {
+      $this->dao = new NYTD_UserPrefs_Keys_DAO();
+    }
+
+    $result = $this->dao->isAccountValid($keyId);
+    return (@$result['status'] == 1 && @$result['account-id'] > 0);
+  }
+
+  /**
+   * This function will take the keyId, and look up in the db if the 
+   * key is expiring in the next N days. If you pass a bogus keyId
+   * we will simply tell you that youre key is not expiring
+   *
+   * @param keyId - unique id for this key used to lookup information
+   * @return true if the key is expiring in KEY_EXPIRE_NOTICE_DAYS
+   */
+  public function isKeyExpiring( &$keyId ) {
+    if (empty($this->dao)) {
+      $this->dao = new NYTD_UserPrefs_Keys_DAO();
+    }
+    
+    $result = $this->dao->fetchExpiresDate( $keyId );
+    if ( @$result['status'] == 1 ) {
+      return time() > $result['expires-on'];
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * This function lets the caller expire the key
+   */
+  public function terminateKey( &$keyId ) {
+    if (empty($this->dao)) {
+      $this->dao = new NYTD_UserPrefs_Keys_DAO();
+    }
+    return $this->dao->expireKey($keyId);
+  }
+
+  /**
+   * A key id that is identified as expired can call renewKey to get
+   * a new key generated. Once the key has been renewed, the user must
+   * use the new private key to encrypt with
+   *
+   * @param keyId Integer unique id for this key used to lookup information
+   * @return Hash
+   *    result['status'] Integer 1 == success 0 == failure
+   *    result['reason'] String if status == failure the reason
+   *    result['expiresOn'] Integer unix time the account expires
+   */              
+  public function renewKey( &$keyId ) {
+    if (!$this->accountExists($keyId)) {
+      $retval = array();
+      $retval['status'] = 0;
+      $retval['reason'] = "This account does not exist; so it can't be renewed.";
+      return $retval;
+    }
+    $pair = $this->makePublicPrivateKeypair();
+    $retval = array();
+    $result = $this->dao->renewKey($keyId, $pair['private'], $pair['public']);
+    if (@$result['status'] == 1) {
+      $retval['status'] = 1;
+      $retval['private'] = $pair['private'];
+      $retval['expiresOn'] = $result['expires_on'];
+    } else {
+      $retval['status'] = 0;
+      $retval['reason'] = "Unable to update the database with the new keys for some reason.";
+    }
+    return $retval;
+  }
+
+  /**
+   * If you need a new key, you need to give us some information to recognize you by
+   *
+   * @param account - String - something meaningful uc-comment-prefs
+   * @param group - String - your functional nytd group e.g. community
+   * @param domain - String - to identify the source company e.g. nytimes.com
+   * @returns - Hash - 
+   *    results['status'] Integer 1 == success 0 == failure
+   *    results['reason'] String status == 0 then some reason
+   *    results['private-key'] String key to be used for encryption
+   *    results['key-id'] String unique ID
+   *    results['secret-token'] String token to has request hour with
+   *    results['exipres-on'] Date unix time when this key will expire
+   */
+  protected function getNewKeyId( &$account, &$group, &$domain ) {
+    $keypair = $this->makePublicPrivateKeypair();
+    if (empty($this->dao)) {
+      $this->dao = new NYTD_UserPrefs_Keys_DAO();
+    }
+    $result = $this->dao->createAccount($keypair['private'], $keypair['public']);
+    if ($result['status'] == 1) {
+      $result['private-key'] = $keypair['private'];
+    }
+    return $result;
+  }
+
+  /**
+   * This function will create a new public/private key pair
+   *
+   * @return - Hash - ['private'] - private key
+   *                  ['public'] - public key
+   */
+  protected function makePublicPrivateKeypair() {
+    // generate the new keys
+    $res=openssl_pkey_new( array(
+                                 "private_key_bits"=>2048,
+                                 "private_key_type"=>OPENSSL_KEYTYPE_RSA));
+    $private = "";
+    // Get the private key
+    openssl_pkey_export($res, $private);
+
+    // Get public key
+    $public=openssl_pkey_get_details($res);
+    return array("private"=>$private,"public"=>$public['key'] );
+  }
+}

@@ -1,0 +1,162 @@
+/* 
+run this sql with -f to skip any errors on first run.
+after the first run, you should be able to run 
+without -f
+*/
+ALTER TABLE APIKEYS_ACCOUNT DROP KEY `ACCOUNT_IDX1`;
+ALTER TABLE APIKEYS_ACCOUNT DROP KEY `ACCOUNT_IDX2`;
+DROP TABLE IF EXISTS APIKEYS_ACCOUNT;
+CREATE TABLE APIKEYS_ACCOUNT (
+  ACCOUNT_ID INT NOT NULL AUTO_INCREMENT,
+  KEY_ID INT NOT NULL,
+  PRIVATE_KEY VARCHAR(1000) NOT NULL,
+  PUBLIC_KEY VARCHAR(1000) NOT NULL,
+  PRIVATE_TOKEN VARCHAR(255) NOT NULL,
+  APPLICATION VARCHAR(255) DEFAULT NULL,
+  DEPARTMENT VARCHAR(255) DEFAULT NULL,
+  DOMAIN VARCHAR(255) DEFAULT NULL,
+  CREATED_ON DATETIME NOT NULL,
+  UPDATED_ON TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),
+  EXPIRES_ON DATETIME NOT NULL,
+  PRIMARY KEY(ACCOUNT_ID)
+);
+ALTER TABLE APIKEYS_ACCOUNT ADD CONSTRAINT `ACCOUNT_IDX1` UNIQUE KEY (`KEY_ID`);
+ALTER TABLE APIKEYS_ACCOUNT ADD CONSTRAINT `ACCOUNT_IDX2` UNIQUE KEY (`PRIVATE_TOKEN`);
+
+DELIMITER $$
+/* 
+ * Create new insert stored proc 
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_Insert $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_Insert (
+  IN in_key_id           INTEGER UNSIGNED,
+  IN in_private_key      VARCHAR(1000),
+  IN in_public_key       VARCHAR(1000),
+  IN in_private_token    VARCHAR(255),
+  IN in_application      VARCHAR(255),
+  IN in_department       VARCHAR(255),
+  IN in_domain           VARCHAR(255),
+  IN in_expires_on       DATETIME
+)  SQL SECURITY INVOKER
+BEGIN
+   INSERT INTO apikeys_account
+    (
+    key_id,
+    private_key,
+    public_key,
+    private_token,
+    application,
+    department,
+    domain,
+    expires_on,
+    created_on,
+    updated_on
+    ) 
+   VALUES 
+    (
+    in_key_id,
+    in_private_key,
+    in_public_key,
+    in_private_token,
+    in_application,
+    in_department,
+    in_domain,
+    in_expires_on,
+    NOW(),
+    NOW()
+    );
+    SELECT LAST_INSERT_ID() as account_id FROM DUAL;
+END $$
+
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_Select $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_Select (
+  IN in_key_id           INTEGER UNSIGNED
+)  SQL SECURITY INVOKER
+BEGIN
+  SELECT account_id,
+         key_id,
+         private_key,
+         public_key,
+         private_token,
+         application,
+         department,
+         domain,
+         created_on,
+         updated_on,
+         expires_on 
+  FROM apikeys_account WHERE key_id = in_key_id;
+
+END $$
+
+/* This proc gets the public key and the private token
+ * for a given key_id if it has not expired
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_SelectBasic $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_SelectBasic (
+  IN in_key_id           INTEGER UNSIGNED
+)  SQL SECURITY INVOKER
+BEGIN
+  SELECT 
+     public_key,
+     private_token
+  FROM apikeys_account WHERE key_id = in_key_id AND expires_on > NOW();
+END $$
+
+/**
+ * This proc will fetch just the expires date
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_SelectExpires $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_SelectExpires (
+  IN in_key_id           INTEGER UNSIGNED
+)  SQL SECURITY INVOKER
+BEGIN
+  SELECT 
+     expires_on
+  FROM apikeys_account WHERE key_id = in_key_id;
+END $$
+
+/**
+ * This is a proc to fetch the PK using the keyId to test validity
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_ValidAccount $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_ValidAccount (
+  IN in_key_id           INTEGER UNSIGNED
+)  SQL SECURITY INVOKER
+BEGIN
+  SELECT 
+     account_id
+  FROM apikeys_account WHERE key_id = in_key_id and expires_on > NOW();
+END $$
+
+/**
+ * Ths procedure expires a key
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_ExpireAccount $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_ExpireAccount (
+  IN in_key_id           INTEGER UNSIGNED
+)  SQL SECURITY INVOKER
+BEGIN
+  UPDATE apikeys_account 
+  SET expires_on = DATE_SUB(CURDATE(),INTERVAL 1 DAY)
+  WHERE key_id = in_key_id;
+END $$
+
+/** 
+ * This procedure is here to update the private key, public key and expires date
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_RenewKey $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_RenewKey (
+  IN in_key_id           INTEGER UNSIGNED,
+  IN in_private_key      VARCHAR(1000),
+  IN in_public_key       VARCHAR(1000),
+  IN in_expires_on       DATETIME
+)  SQL SECURITY INVOKER
+BEGIN
+   UPDATE apikeys_account
+    SET 
+      private_key = in_private_key,
+      public_key = in_public_key,
+      expires_on = in_expires_on,
+      updated_on = current_timestamp()
+   WHERE key_id = in_key_id;
+END $$

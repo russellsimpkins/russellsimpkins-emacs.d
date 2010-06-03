@@ -1,0 +1,223 @@
+<?php
+require_once ('autorun.php');
+require_once ('web_tester.php');
+date_default_timezone_set('US/Eastern');
+define("DEBUG",true);
+
+/**
+ * Helper method to turn on and off debugging
+ */
+function debug($msg) {
+  if (DEBUG) {
+    echo "<pre>";
+    print_r($msg);
+    echo "</pre>";
+  }
+}
+
+/**
+ * Return back has of data . Y-m-d-H
+ */
+function hashWithTime(&$data) {
+    return md5( $data . date('Y-m-d-H'));
+}
+
+/**
+ * Return back an array with current time and time - 1 hour
+ * return array[0] = data . ctime - 1 hr
+ *        array[1] = data . ctime 
+ */
+function hashKeyWithTime(&$key, $time) {
+    if (empty($time)) $time = time();
+    return array(0=>md5($key . date('Y-m-d-H',$time-3600)),1=>md5($key . date('Y-m-d-H',$time)));
+}
+
+function validate(&$key) {
+    $time = time();
+    md5($key . date('Y-m-d-H',$time));
+}
+
+class ApiCall {
+    var $publicKey = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxCRKYYHIpkVpe+VmZaNT\n09U62QrXZxdJuBDH4s9ePrAcRVrL02VNomooluj7kZuc7brduBT5FoAE1eOVhNnn\ng+Xq6LAlBHARMIoqyryv3bOXXHWAg6HhgQ75Qbmm5vwnE2gMxzhd8+eFM3e6yoFF\nZU23SuRZYC2CmStvzd0edGK3VfddPNS3JOsC2abdd01yXOHP59hKyiO4dkz+dpGS\nUte0M3nBBVBwi6Itk5zOpZIw5LKcDI7Z03WN2Xufg8dUM+qbGWV2Gzs0/6418UEZ\nE+AirYdgrP0AibP+ecsYfUc5mEK1d5cshcHXiTGDBczZxRK4mYf6VfYhv/qScWzB\nEwIDAQAB\n-----END PUBLIC KEY-----";
+    var $token = "\$1\$3SWos5JF\$zSoypJRvn4reeuhLCrmPW.";
+    var $ltime = null;
+    var $sig = null;
+    /**
+     * A signature is created by encrypting the md5 of "token . date('Y-m-d-H')"
+     */
+    function genSignature() {
+        
+        # to prevent us from generating this sigature too much
+        if ($ltime != date('Y-m-d-H')) {
+            $ltime = date('Y-m-d-H');
+            $this->sig = null;
+        }
+        
+        # only generate a new signature with the change of the hour
+        if ($this->sig != null) 
+            return $this->sig;
+            
+        # gen a new signature
+        $data = md5( $this->token . $this->ltime);
+        openssl_public_encrypt($data,$this->sig,$this->pubKey);
+        return $this->sig;
+    }
+}
+
+class ApiCheck {
+    var $privateKey = "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAxCRKYYHIpkVpe+VmZaNT09U62QrXZxdJuBDH4s9ePrAcRVrL\n02VNomooluj7kZuc7brduBT5FoAE1eOVhNnng+Xq6LAlBHARMIoqyryv3bOXXHWA\ng6HhgQ75Qbmm5vwnE2gMxzhd8+eFM3e6yoFFZU23SuRZYC2CmStvzd0edGK3Vfdd\nPNS3JOsC2abdd01yXOHP59hKyiO4dkz+dpGSUte0M3nBBVBwi6Itk5zOpZIw5LKc\nDI7Z03WN2Xufg8dUM+qbGWV2Gzs0/6418UEZE+AirYdgrP0AibP+ecsYfUc5mEK1\nd5cshcHXiTGDBczZxRK4mYf6VfYhv/qScWzBEwIDAQABAoIBAQCwh5kKOSzFuSM/\nBzApud3wgbD9Nuy3NBZ9O10rnUdNVGOdaCKamEpPKwxtBjOk0VFkBRMYYofs4Dt5\n5eLkNtpPs9bApggq/lH6ReBNp5UBDGnmJTsNPd0fssJTjSvSKI9iv/sAMpMcufsA\nX3oWWFKE4nVdSjfGgC9Se+2ccq6+P6SDUrtUZ411kv0bm9OoEE2GpQQ+Y2rHpI7F\nNIIGfeoa7xzM+0tzGfrQk66hpTIjjJqBNgUkrF6AzxAmsnftiZehZpBMru5N1D1E\nJfpcaTehCTLVqsYuXMtPssFS6IHrr8f6ocOe4Cx4JNUmgQl+5/F9pt51CXMSbYoi\nUf/Ire7BAoGBAPuOb61W0wngrDzP6WMXPFAPIHPzFHGSpO13egxfkgyjZ69ifVjM\nerWr4mrAzBtJcF2psrvBC4yUdD4RVJUs6nPV2qHZ7m88EQzlnt30ya9OGpuxFpXu\nL1WHBBLpxmh3PpZTFFK7EqLX+Cj+jrGF9adOWqqXg9ZCJ4zhoZ2QiGnnAoGBAMeb\nQ4AXTFqtWDZv2fPiAvGGX+sziuaJVhJf7NngRxSGZEi/hU+uV8Us1jqoghNBv9mg\n8Fzl4Iyf7DtOVsDeej7dot86QpWxxd4/ebOSEJ7i5i7nM5isHEUMoDjCFBU3yC3d\n+2NBIvTcsMxjKnCOzJr8OIFwbiT/fgsGkk6WLoH1AoGAR+aSbQ0gDPa2xDr5DmWZ\ny5hHQlz8PuoXUfiQXfEDIbGi9TJFeZgYisyyTqkErdfz0hGrEJdA4dGc2BDECE9q\nQ+mgMBrGV+znQrRvECnja8P7Pv0C45/Mz7ljpLRFDZ7nuLfOW0c1MG5ic/Uue/c6\nG7P9njzoZdlKzK3BL/QbyYkCgYBGqRAcKCM/dl3j53SggUHJfmg2OujQ840ktBCE\nkICZI3ocxq/KpU0s39J2sXBaoMvpnq94M2hqX7Kgy/qqDBf6aTtfCqDHnUcOhinv\nB6YamPgjYnVBdqwLRYzyisHRQQ38LrjvSf+17uoncHN1pReJRgA60jIrpsZX4Nuq\nNkAAgQKBgQC58PfvqAkwlkqWa9ACQ2ReW1+wlY4MKCxqwnfDPD9+TJmkOgt8UZ2i\nXf9kXxksVuM4AIF3UFoXjNw/7v/xKycjgPin6fRvqAB5XKPNndp1fbDP+mRlhWVB\nThgXYj8VJuvkVo3KLiZgKc988cosYIDUk+9X0YlHn/mg6tb+mBW0Ug==\n-----END RSA PRIVATE KEY-----";
+    var $token = "\$1\$3SWos5JF\$zSoypJRvn4reeuhLCrmPW.";
+
+    /**
+     * Logic to validate a signature
+     */
+    function isValidSignature(&$sig) {
+        $ltime = date('Y-m-d-H');
+        $data = md5( $this->token . $ltime);
+        openssl_public_encrypt($data,$tsig,$this->pubKey);
+        if ($sig==$tsig)
+            return true;
+        
+        # if we're here, there wasn't a match - check the last hour, in case we're on the cusp
+        $ltime = date('Y-m-d-H',time()-3600);
+        $data = md5( $this->token . $ltime);
+        openssl_public_encrypt($data,$tsig,$this->pubKey);
+        if ($sig==$tsig)
+            return true;
+
+        return false;
+    }
+    
+    /**
+     * Call this to validate a caller's signature
+     */
+    function isValidCaller(&$caller,&$sig) {
+        $this->setTokenAndKey($caller);
+        return $this->isValidSignature($sig);
+    }
+    
+    /**
+     * Get the caller's data from the db
+     */
+    function setTokenAndKey(&$caller) {
+       $sql = "select public_key, signature from clients where caller_id = $caller and is_active = 1";
+       # do sql
+       $this->token = "\$1\$3SWos5JF\$zSoypJRvn4reeuhLCrmPW.";
+       $this->privateKey = "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAxCRKYYHIpkVpe+VmZaNT09U62QrXZxdJuBDH4s9ePrAcRVrL\n02VNomooluj7kZuc7brduBT5FoAE1eOVhNnng+Xq6LAlBHARMIoqyryv3bOXXHWA\ng6HhgQ75Qbmm5vwnE2gMxzhd8+eFM3e6yoFFZU23SuRZYC2CmStvzd0edGK3Vfdd\nPNS3JOsC2abdd01yXOHP59hKyiO4dkz+dpGSUte0M3nBBVBwi6Itk5zOpZIw5LKc\nDI7Z03WN2Xufg8dUM+qbGWV2Gzs0/6418UEZE+AirYdgrP0AibP+ecsYfUc5mEK1\nd5cshcHXiTGDBczZxRK4mYf6VfYhv/qScWzBEwIDAQABAoIBAQCwh5kKOSzFuSM/\nBzApud3wgbD9Nuy3NBZ9O10rnUdNVGOdaCKamEpPKwxtBjOk0VFkBRMYYofs4Dt5\n5eLkNtpPs9bApggq/lH6ReBNp5UBDGnmJTsNPd0fssJTjSvSKI9iv/sAMpMcufsA\nX3oWWFKE4nVdSjfGgC9Se+2ccq6+P6SDUrtUZ411kv0bm9OoEE2GpQQ+Y2rHpI7F\nNIIGfeoa7xzM+0tzGfrQk66hpTIjjJqBNgUkrF6AzxAmsnftiZehZpBMru5N1D1E\nJfpcaTehCTLVqsYuXMtPssFS6IHrr8f6ocOe4Cx4JNUmgQl+5/F9pt51CXMSbYoi\nUf/Ire7BAoGBAPuOb61W0wngrDzP6WMXPFAPIHPzFHGSpO13egxfkgyjZ69ifVjM\nerWr4mrAzBtJcF2psrvBC4yUdD4RVJUs6nPV2qHZ7m88EQzlnt30ya9OGpuxFpXu\nL1WHBBLpxmh3PpZTFFK7EqLX+Cj+jrGF9adOWqqXg9ZCJ4zhoZ2QiGnnAoGBAMeb\nQ4AXTFqtWDZv2fPiAvGGX+sziuaJVhJf7NngRxSGZEi/hU+uV8Us1jqoghNBv9mg\n8Fzl4Iyf7DtOVsDeej7dot86QpWxxd4/ebOSEJ7i5i7nM5isHEUMoDjCFBU3yC3d\n+2NBIvTcsMxjKnCOzJr8OIFwbiT/fgsGkk6WLoH1AoGAR+aSbQ0gDPa2xDr5DmWZ\ny5hHQlz8PuoXUfiQXfEDIbGi9TJFeZgYisyyTqkErdfz0hGrEJdA4dGc2BDECE9q\nQ+mgMBrGV+znQrRvECnja8P7Pv0C45/Mz7ljpLRFDZ7nuLfOW0c1MG5ic/Uue/c6\nG7P9njzoZdlKzK3BL/QbyYkCgYBGqRAcKCM/dl3j53SggUHJfmg2OujQ840ktBCE\nkICZI3ocxq/KpU0s39J2sXBaoMvpnq94M2hqX7Kgy/qqDBf6aTtfCqDHnUcOhinv\nB6YamPgjYnVBdqwLRYzyisHRQQ38LrjvSf+17uoncHN1pReJRgA60jIrpsZX4Nuq\nNkAAgQKBgQC58PfvqAkwlkqWa9ACQ2ReW1+wlY4MKCxqwnfDPD9+TJmkOgt8UZ2i\nXf9kXxksVuM4AIF3UFoXjNw/7v/xKycjgPin6fRvqAB5XKPNndp1fbDP+mRlhWVB\nThgXYj8VJuvkVo3KLiZgKc988cosYIDUk+9X0YlHn/mg6tb+mBW0Ug==\n-----END RSA PRIVATE KEY-----";
+    }
+}
+class TestAnother {
+
+}
+
+class TestCerts extends WebTestCase {
+
+  function setter($input) {
+    $input = "abc" . time();
+  }
+  function ptrSetter(&$input) {
+    $input = "abc" . time();
+  }
+  function testGenNewKey() {
+
+    // generate the new keys
+    $res=openssl_pkey_new( array(
+                                 "private_key_bits"=>2048,
+                                 "private_key_type"=>OPENSSL_KEYTYPE_RSA));
+    $private = "";
+    // Get the private key
+    openssl_pkey_export($res, $private);
+
+    // Get public key
+    $public=openssl_pkey_get_details($res);
+
+    debug( array("private"=>$private,"public"=>$public["key"]) );
+    $hexstr = unpack('H*', $private);
+    $nval = "Before call";
+    $this->setter($nval);
+    debug($nval);
+    $this->ptrSetter($nval);
+    debug($nval);
+
+    debug(crc32(rand(0,time())));
+    debug(md5(rand(0,time())));
+    debug("============================");
+  }
+    function testHash() {
+        $key = "some key";
+        $time = time();
+        $res = hashKeyWithTime($key,$time);
+        $this->assertNotEqual($res,null,"The result was null");
+        debug($res);
+        debug(date('YmdH'));
+    }
+    function testEncDec() {
+        $pubKey = "-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxCRKYYHIpkVpe+VmZaNT
+09U62QrXZxdJuBDH4s9ePrAcRVrL02VNomooluj7kZuc7brduBT5FoAE1eOVhNnn
+g+Xq6LAlBHARMIoqyryv3bOXXHWAg6HhgQ75Qbmm5vwnE2gMxzhd8+eFM3e6yoFF
+ZU23SuRZYC2CmStvzd0edGK3VfddPNS3JOsC2abdd01yXOHP59hKyiO4dkz+dpGS
+Ute0M3nBBVBwi6Itk5zOpZIw5LKcDI7Z03WN2Xufg8dUM+qbGWV2Gzs0/6418UEZ
+E+AirYdgrP0AibP+ecsYfUc5mEK1d5cshcHXiTGDBczZxRK4mYf6VfYhv/qScWzB
+EwIDAQAB
+-----END PUBLIC KEY-----";
+        $privKey = "-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAxCRKYYHIpkVpe+VmZaNT09U62QrXZxdJuBDH4s9ePrAcRVrL
+02VNomooluj7kZuc7brduBT5FoAE1eOVhNnng+Xq6LAlBHARMIoqyryv3bOXXHWA
+g6HhgQ75Qbmm5vwnE2gMxzhd8+eFM3e6yoFFZU23SuRZYC2CmStvzd0edGK3Vfdd
+PNS3JOsC2abdd01yXOHP59hKyiO4dkz+dpGSUte0M3nBBVBwi6Itk5zOpZIw5LKc
+DI7Z03WN2Xufg8dUM+qbGWV2Gzs0/6418UEZE+AirYdgrP0AibP+ecsYfUc5mEK1
+d5cshcHXiTGDBczZxRK4mYf6VfYhv/qScWzBEwIDAQABAoIBAQCwh5kKOSzFuSM/
+BzApud3wgbD9Nuy3NBZ9O10rnUdNVGOdaCKamEpPKwxtBjOk0VFkBRMYYofs4Dt5
+5eLkNtpPs9bApggq/lH6ReBNp5UBDGnmJTsNPd0fssJTjSvSKI9iv/sAMpMcufsA
+X3oWWFKE4nVdSjfGgC9Se+2ccq6+P6SDUrtUZ411kv0bm9OoEE2GpQQ+Y2rHpI7F
+NIIGfeoa7xzM+0tzGfrQk66hpTIjjJqBNgUkrF6AzxAmsnftiZehZpBMru5N1D1E
+JfpcaTehCTLVqsYuXMtPssFS6IHrr8f6ocOe4Cx4JNUmgQl+5/F9pt51CXMSbYoi
+Uf/Ire7BAoGBAPuOb61W0wngrDzP6WMXPFAPIHPzFHGSpO13egxfkgyjZ69ifVjM
+erWr4mrAzBtJcF2psrvBC4yUdD4RVJUs6nPV2qHZ7m88EQzlnt30ya9OGpuxFpXu
+L1WHBBLpxmh3PpZTFFK7EqLX+Cj+jrGF9adOWqqXg9ZCJ4zhoZ2QiGnnAoGBAMeb
+Q4AXTFqtWDZv2fPiAvGGX+sziuaJVhJf7NngRxSGZEi/hU+uV8Us1jqoghNBv9mg
+8Fzl4Iyf7DtOVsDeej7dot86QpWxxd4/ebOSEJ7i5i7nM5isHEUMoDjCFBU3yC3d
++2NBIvTcsMxjKnCOzJr8OIFwbiT/fgsGkk6WLoH1AoGAR+aSbQ0gDPa2xDr5DmWZ
+y5hHQlz8PuoXUfiQXfEDIbGi9TJFeZgYisyyTqkErdfz0hGrEJdA4dGc2BDECE9q
+Q+mgMBrGV+znQrRvECnja8P7Pv0C45/Mz7ljpLRFDZ7nuLfOW0c1MG5ic/Uue/c6
+G7P9njzoZdlKzK3BL/QbyYkCgYBGqRAcKCM/dl3j53SggUHJfmg2OujQ840ktBCE
+kICZI3ocxq/KpU0s39J2sXBaoMvpnq94M2hqX7Kgy/qqDBf6aTtfCqDHnUcOhinv
+B6YamPgjYnVBdqwLRYzyisHRQQ38LrjvSf+17uoncHN1pReJRgA60jIrpsZX4Nuq
+NkAAgQKBgQC58PfvqAkwlkqWa9ACQ2ReW1+wlY4MKCxqwnfDPD9+TJmkOgt8UZ2i
+Xf9kXxksVuM4AIF3UFoXjNw/7v/xKycjgPin6fRvqAB5XKPNndp1fbDP+mRlhWVB
+ThgXYj8VJuvkVo3KLiZgKc988cosYIDUk+9X0YlHn/mg6tb+mBW0Ug==
+-----END RSA PRIVATE KEY-----";
+        $encrypted = "";
+        $decrypted = "";
+        $data = "\$1\$3SWos5JF\$zSoypJRvn4reeuhLCrmPW.";
+        debug("md5 of data: " . md5($data));
+        
+        openssl_public_encrypt($data,$encrypted,$pubKey);
+        debug("Unencrypted: ");
+        debug($data);
+        debug("Encrypted before unpack: ");
+        debug($encrypted);
+        debug("Encrypted After unpack: ");
+        $encrypted = unpack('H*',$encrypted);
+
+        debug($encrypted);
+        $encrypted = pack('H*',$encrypted[1]);
+        debug("Raw encrypt out");
+        debug($encrypted);
+        
+        openssl_private_decrypt($encrypted,$decrypted,$privKey);
+        debug("Decrypted: ");
+        debug($decrypted);
+        
+        
+        openssl_private_encrypt(hashWithTime($data),$encrypted,$privKey);
+        debug("Unencrypted hash: ");
+        debug(hashWithTime($data));
+        debug($encrypted);
+        
+        openssl_public_decrypt($encrypted,$decrypted,$pubKey);
+        debug("Decrypted: ");
+        debug($decrypted);   
+    }
+}

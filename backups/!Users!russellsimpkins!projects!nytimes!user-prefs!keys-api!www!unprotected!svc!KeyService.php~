@@ -1,0 +1,5 @@
+<?php
+nytd_require('NYTD/APIKeys/Service.class.php');
+$svc = new NYTD_UserPrefs_APIKeys_Service();
+print_r($doit);
+$svc->run();

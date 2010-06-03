@@ -1,0 +1,50 @@
+<project name="JavaSDK" default="done" basedir=".">
+
+	<property name="basedrive" value="../.."/>
+
+	<!-- ************************************************************************************************************************ -->
+	<!-- The following property is user specific and will need to be properly set before building -->
+	
+	<!-- This property is the name of the directory containing the src directory -->
+	<!-- Ex. JavaSDK -->
+	<property name="projectname" value=""/>
+	
+	<!-- ************************************************************************************************************************ -->
+	
+	<property name="projectdir" value="${basedrive}/${projectname}"/>
+	<property name="projectroot" value="${basedrive}/${projectname}"/>
+	<property name="src" value="${projectroot}/src"/>
+	<property name="build" value="${projectroot}/build"/>
+	<property name="lib" value="${projectroot}/lib"/>
+	<property name="sdkjarname" value="PaymentechSDK.jar"/>
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete file="${lib}/${sdkjarname}"/>
+	</target>
+	<target name="prepare" depends="clean">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build}/classes"/>
+		<mkdir dir="${build}/src"/>
+	</target>
+	<target name="compile" depends="prepare" >
+		<javac srcdir="${src}" destdir="${build}">
+			<classpath>
+				<pathelement location="${projectroot}/lib/commons-httpclient-3.1.jar"/>
+				<pathelement location="${projectroot}/lib/ccommons-codec-1.3.jar"/>
+				<pathelement location="${projectroot}/lib/commons-logging.jar"/>
+				<pathelement location="${projectroot}/lib/jcert.jar"/>
+				<pathelement location="${projectroot}/lib/jsse.jar"/>
+				<pathelement location="${projectroot}/lib/jnet.jar"/>
+				<pathelement location="${projectroot}/lib/xml4j.jar"/>
+				<pathelement location="${projectroot}/lib/regexp.jar"/>
+				<pathelement location="${projectroot}/lib/log4j-1.2.8.jar"/>
+			</classpath>
+		</javac>
+		<jar jarfile="${lib}/${sdkjarname}">
+			<fileset dir="${build}"/>
+		</jar>
+	</target>
+	<target name="done" depends="compile">
+  </target>
+</project>

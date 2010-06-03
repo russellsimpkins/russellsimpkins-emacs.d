@@ -1,0 +1,68 @@
+<?php
+/**
+ * Service.class.php  
+ *
+ * @package lib.backend.php.NYTD.APIKeys
+ */
+nytd_require('NYTD/Logger/Web.class.php');
+nytd_require('NYTD/APIKeys/Response.class.php');
+nytd_require('NYTD/APIKeys/Manager.class.php');
+
+/**
+ * This class is created in the frontend to handle all
+ * service requests to the API Keys service
+ */
+class NYTD_UserPrefs_APIKeys_Service {
+  /**
+   * this will dictate response format. For now we'll do json.
+   * @var string
+   */
+  private $action;
+  private $params;
+
+  public function __construct() {
+    $this->logger = NYTD_Logger_Web::getInstance('user');
+    $this->logger->setLevel(255);
+   
+    // $this->logger->debug("Request Method is: " . $_SERVER['REQUEST_METHOD']);
+      
+    switch ($_SERVER['REQUEST_METHOD']) {
+      case 'GET':
+        $this->action = 'Read';
+        $this->params = &$_GET;
+        break;
+      case 'PUT':
+        $this->action = 'Update';
+        $this->params = &$_POST; 
+        break;
+      case 'POST':
+        $this->action = 'Create';
+        $this->params = &$_POST;
+        break;
+    }
+  }
+
+  /**
+   * Call this function to handle the request
+   */
+  public function run() {
+    $mgr = null;
+    // add new calls in this switch block.
+    switch ($_SERVER['REQUEST_URI']) {
+      case "/svc/user/mobile/auth" : 
+        $mgr = new NYTD_OAuth_Manager($this->action, $this->params);
+        break;
+      case "/svc/user/auth" : 
+        $mgr = new NYTD_OAuth_Manager($this->action, $this->params);
+        break;
+      // default is "/svc/user/mobile" : 
+      default : 
+        $mgr = new NYTD_User_Manager($this->action, $this->params);
+    }
+      
+    $result = $mgr->handleRequest();
+    return new NYTD_User_Response($result);
+  }
+} // end of class
+
+?>

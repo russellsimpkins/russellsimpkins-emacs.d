@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SHOW AMERICA - WHERE YOU COME TO GET NOTICED</title>
+<link href="files/css/general.css" rel="stylesheet" type="text/css" />
+<link href="files/css/global.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<!-- sof nav -->
+<div class="nav">
+	<ul class="main_menu">
+		<li id="home"><a href="#"><span>Home</span></a></li>
+	  <li id="profolio"><a href="#"><span>My Profolio</span></a></li>
+	  <li id="entries"><a href="#"><span>Entries</span></a></li>
+      <li id="searchfriends"><a href="#"><span>Search Friends</span></a></li>
+      <li id="uploads"><a href="#"><span>Uploads</span></a></li>
+      <li id="howto"><a href="#"><span>How To</span></a></li>
+      <li id="contests"><a href="#"><span>Contests</span></a></li>
+      <li id="standings"><a href="#"><span>Standings</span></a></li>
+      <li id="blog"><a href="#"><span>Blog</span></a></li>
+        
+    <li>
+          <form id="searchform" name="searchform" method="post" action="">
+            <label class="search_field">
+            <input type="text" name="search" id="search" />
+            </label>
+            <label class="search_btn">
+            <input type="submit" name="searchbtn" id="searchbtn" value="." />
+            </label>
+          </form>
+        </li>
+  </ul>
+</div>
+<!-- eof nav -->
+
+<!-- sof header -->
+<div class="header">
+	
+	<div class="header_inner">
+    	<div class="hdr_title">
+    		<div class="t1">
+            	<div class="t2"><img src="files/images/registration/title_register.gif" alt="Profolio" width="203" height="26" /></div>
+          </div>
+        </div>
+    </div>
+    <div class="header_excerpt"><img src="files/images/top_blurb2.gif" width="1000" height="46" /></div>
+</div>
+<!-- eof header -->
+
+<!-- sof content -->
+<div class="content">
+	<div class="content_inner subCategory Registration">
+  
+  <div class="col_1 registration_details">
+  
+  <div class="instr"><img src="files/images/registration/registrationPoints.png" width="10" height="11" class="regPoint" />You can upload your resume, portfolio and video bio to gain exposure while controlling who sees it.</div>
+  <div class="instr"><img src="files/images/registration/registrationPoints.png" width="10" height="11" class="regPoint" />Comment, rate, and make video responses to your favorite videos.</div>
+  <div class="instr"><img src="files/images/registration/registrationPoints.png" width="10" height="11" class="regPoint" />Compete with others and win great prizes  while showing off your talent.</div>
+  <div class="instr"><img src="files/images/registration/registrationPoints.png" width="10" height="11" class="regPoint" />Save your favorite videos to watch and share later.</div>
+  
+  </div>
+  
+  <div class="col_2 registration_form">
+  	<div class="innerForm">
+    <img class="hdr_signup" src="files/images/registration/registration_txt_signup.gif" />
+    <form>
+      <label class="txtF">Username</label>
+      <label class="inputF"><input class="inputR_mid req" type="text" name="username" id="username" /></label>
+      
+      <label class="txtF">Password</label>
+      <label class="inputF"><input class="inputR_mid" type="password" name="password" id="password" /></label>
+      
+      <p class="borderTop"></p>
+      
+      <label class="txtF-lgr">First name:</label>
+      <label class="inputF-lgr"><input class="inputR_lgr req" type="text" name="username" id="username" /></label>
+      
+      <label class="txtF-lgr">Last name:</label>
+      <label class="inputF-lgr"><input class="inputR_lgr req" type="text" name="username" id="username" /></label>
+      
+      <label class="txtF-lgr">E-mail:</label>
+      <label class="inputF-lgr"><input class="inputR_lgr req" type="text" name="username" id="username" /></label>
+      
+      <label class="txtF-lgr">DOB:</label>
+      <label class="inputF-lgr"><input name="username" type="text" class="inputR_sm" id="username" maxlength="3" />
+      <input name="username" type="text" class="inputR_sm" id="username" maxlength="3" />
+      <input name="username" type="text" class="inputR_sm req" id="username" maxlength="4" />
+      </label>
+      
+      <label class="txtF-lgr">Location:</label>
+      <label class="inputF-lgr"><input class="inputR_lgr" type="text" name="username" id="username" /></label>
+      
+      <label class="txtF-lgr">Silks &amp; Talent:</label>
+      <label class="inputF-lgr"><input class="inputR_lgr" type="text" name="username" id="username" /></label>
+      
+      <label class="txtF-lgr">About Me:</label>
+      <label class="inputF-lgr"><textarea name="username" class="inputR_lgr" id="username"></textarea></label>
+      
+      <label class="txtF-lgr">&nbsp;</label>
+      <label class="inputF-lgr"><input class="chkbox" name="checkbox" type="checkbox" id="checkbox" /> I agree to all terms and conditions.</label>
+      
+      <label class="txtF-lgr">&nbsp;</label>
+      <label class="inputF-lgr"></label>
+      <label>
+      <input type="submit" name="button" id="send" value="Submit" />
+      </label>
+      <label>
+      <input type="reset" name="button2" id="clear" value="Reset" />
+      </label>
+    </form>
+    </div>
+    <div class="clear">&nbsp;</div>
+  </div>
+        
+	<div class="col_3"><img src="files/images/banner/banner_defination.jpg" width="300" height="600" /></div>
+    
+    
+	  <div class="clear">&nbsp;</div>
+    </div>
+</div>
+<!-- eof content -->
+
+<!-- sof footer -->
+<div class="footer">
+	<div class="footer_inner">
+    	<ul>
+        	<li class="text_l">
+            <a href="#">About Us</a>
+            <a href="#">Coporate</a>
+            </li>
+            <li>
+            <a href="#">Sponsors</a>
+            <a href="#">Charity/Organization</a>
+            </li>
+            <li>
+            <a href="#">Press</a>
+            <a href="#">Advertise</a>
+            </li>
+            <li>
+            <a href="#">F.A.Q</a>
+            <a href="#">Contact Us</a>
+            </li>
+            <li class="text_r">
+            <a href="#">Privacy</a>
+            <a href="#">Terms and Conditions</a>
+            <a href="#">Copyright &copy; 2010 SHOW AMERICA</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- eof footer -->
+</body>
+</html>

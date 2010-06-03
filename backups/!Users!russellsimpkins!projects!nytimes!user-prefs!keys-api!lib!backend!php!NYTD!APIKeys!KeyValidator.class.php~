@@ -1,0 +1,132 @@
+<?php
+require_once('NYTD/Keys/Key.config.php');
+
+
+/**
+ * This class supports key encryption/decryption mechanisms
+ */
+class NYTD_UserPrefs_APIKeys_Validator {
+
+  /**
+   * This function expects a valid keyId and an encrypted block of data
+   *
+   * The encrypted block of data is expected to be:
+   *    - encrypted with private-key associated with keyId
+   *    - data encrypted is: MD5( 'secret-token' . time('H') )
+   *
+   * @param - keyId - String - unique identifier of the account
+   * @param - data - String - data block; see above
+   * @param - binary - boolean - if true you are passing raw binary format, 
+   *                             if false you've converted binary to hex string with unpack('H*',$binary)
+   * @return - true if valid - false if unable to validate
+   */
+  function validate( &$keyId, &$validateThis, $binary = FALSE ) {
+    if (empty($keyId) || empty($validateThis)) {
+      return false;
+    }
+    
+    // get the key data
+    $data = $this->fetchKeyData($keyId);
+    if ($data['status'] != 1) return BAD_KEY_ID; // -10 == bad keyId
+
+    // if not in binary format, we need to unpack from hex to binary string
+    if (!$binary) {
+      $validateThis = pack('H*',$validateThis); //fyi; you can convert binary to hex string with unpack('H*',$binary)
+    }
+
+    $checkdata = $this->decryptMessage($data['public-key'],$validateThis);
+    if ($checkdata['status'] != 1) return BAD_ENCRYPTION; // -11 == bad key
+
+    return ($checkdata['decrypted'] == $data['hash-test']);
+  }
+
+  /**
+   * An interal only function call to get back the key data for account
+   *
+   * @param - keyId - String - unique identifier
+   * @return - Hash - results['result'] : 0 failure : 1 success
+   *                  results['data']['public-key']
+   *                  results['data']['hash-test'] : this is MD5( secret-token . date('H') )
+   *                  results['data']['hash-test-n'] : this is for the next hour
+   * 
+   */
+  private function fetchKeyData( &$keyId ) {
+    if (empty($this->dao)) {
+      $this->dao = new NYTD_UserPrefs_APIKeys_DAO();
+    }
+    $retval = array();
+    $res = $this->dao->getAccountPublicWithToken($keyId);
+    
+    if (empty($res)) {
+      $retval['status'] = 0;
+      $retval['reason'] = "There was a database issue - verify the key is valid.";
+    } else {
+      $retval['status'] = 1;
+      $retval['public-key'] = $row['public_key'];
+      // should we has the token?
+      if (NYTD_UserPrefs_APIKeys_Config::HASH_PRIVATE_TOKEN_WITH_HOUR) {
+        $retval['hash-test'] = md5($row['private_token'] . gmdate('H'));
+        // we always check now and the next hour, just in case that
+        // call was supper close to the next hour e.g. 10:59:59
+        $retval['hash-test-future'] = md5($row['private_token'] . gmdate('H',time()+3600));
+      } else {
+        $retval['hash-test'] = $row['private_token'];
+      }
+    }
+    return $retval;
+  }
+
+  /**
+   * An internal function to decrypt a message with a public key Given
+   * the public-key and the block of data to decrypt, this function
+   * will attempt to decrypt and return a status with the resulting
+   * data.
+   *
+   * @params - publicKey - String - the public key to do the decryption with
+   * @params - whatToDecrypt - String - the data to decrypt
+   * @return - Hash - data['status'] - int - 0 failure : 1 success
+   *                  data['decrypted'] - String - the decrypted data
+   */
+  protected function decryptMessage( &$publicKey, &$whatToDecrypt ) {
+    $result = "";
+    $retval = array();
+    try {
+      openssl_public_decrypt($whatToDecrypt,$result,$publicKey);
+      $retval['status'] = 0;
+      $retval['decrypted'] = $result;
+    } catch (Exception $e) {
+      $retval['status'] = 1;
+      $retval['reason'] = print_r($exception,true);
+    }
+    return $retval;
+  }
+
+  /**
+   * Encapsulate the logic to turn something into hex string format
+   *
+   * @param input - string data
+   * @return String - as hex string e.g. ----- becomes 2d2d2d2d2d
+   * @see http://pgregg.com/projects/php/code/hexstr.php
+   */
+  public function convertToHexString( &$input ) {
+    $hexstr = unpack('H*', $private);
+    $input = array_shift($hexstr);
+    return $input;
+  }
+
+  /**
+   * Encapsulate the logic to turn data from hex string to string (or
+   * whatever it was) e.g. 2d2d becomes --
+   * 
+   * @param input - hex string data 
+   * @return String (or whatever it was) This method will set the
+   * passed value as well.
+   * @see http://pgregg.com/projects/php/code/hexstr.php
+   */
+  public function revertHexStringBack( &$input ) {
+    $input = str_replace(' ', '', $input);
+    $input = str_replace('\x', '', $input);
+    $input = pack('H*', $input);
+    return $input;
+  }
+}

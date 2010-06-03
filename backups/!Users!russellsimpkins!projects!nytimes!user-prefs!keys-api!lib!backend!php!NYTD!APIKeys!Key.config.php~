@@ -1,0 +1,97 @@
+<?php
+// set the default timezone to be sure.
+date_default_timezone_set('America/New_York');
+/**
+ * This class holds all of our configuration settings for the keys-api service
+ */
+class NYTD_UserPrefs_APIKeys_Config {
+
+  // by default a key will live for 6 months
+  const KEY_LIVES_FOR_DAYS = 180;
+
+  // 30 days before a key expires, a notice is available
+  const KEY_EXPIRE_NOTICE_DAYS = 30;
+
+  // error code we use if we can't find data for a key_id in the db
+  const BAD_KEY_ID = -10;
+
+  // error code we use if unable to decrypt a message
+  const BAD_ENCRYPTION = -11;
+
+  // should the code has with the hour - in case mgt wants to turn
+  // this off
+  const HASH_PRIVATE_TOKEN_WITH_HOUR = true;
+
+  // how many times should we try to create a new account
+  const MAX_CREATE_TRIES = 5;
+
+  // all the servers for memcache
+  public static $MEMCACHE_CONFIG = array(
+    "development" => array(
+       array(
+          "host" => "espmc.sprvt.nytimes.com",
+          "port" => 11212,
+          "persistent" => true
+       )
+    ) ,
+    "staging" => array(
+       array(
+          "host" => "espmc.sprvt.nytimes.com",
+          "port" => 11212,
+          "persistent" => true
+       )
+    ) ,
+    "production" => array(
+       array(
+          "host" => "espmc01.prvt.nytimes.com",
+          "port" => 11212,
+          "persistent" => true
+       ),
+       array(
+          "host" => "espmc02.prvt.nytimes.com",
+          "port" => 11212,
+          "persistent" => true
+       ),
+       array(
+          "host" => "espmc03.prvt.nytimes.com",
+          "port" => 11212,
+          "persistent" => true
+       ),
+       array(
+          "host" => "espmc04.prvt.nytimes.com",
+          "port" => 11212,
+          "persistent" => true
+       )
+     ));
+  /**
+   * Possible mappings based on env
+   */
+  public static $SLAYER_MAPPING = array(
+  	 "development" => array(
+		  "DBSLAYER_MASTER" => "userprefs-readwrite",
+		  "DBSLAYER_SLAVE" => "userprefs-readonly"),
+	  "staging" => array(
+		  "DBSLAYER_MASTER" => "userprefs-readwrite",
+		  "DBSLAYER_SLAVE" => "userprefs-readonly"),
+	  "production" => array(
+		  "DBSLAYER_MASTER" => "userprefs-readwrite",
+		  "DBSLAYER_SLAVE" => "userprefs-readonly")
+  );
+
+  const DBSLAYER_SLAVE = 'userprefs-readonly';
+  const DBSLAYER_MASTER = 'userprefs-readwrite';
+  const KEYS_CACHE_PREFIX = 'APIKeys-';
+
+  public static $RESPONSE_MESSAGE = array(
+    '400' => 'HTTP/1.x 400 Bad Request',
+    '404' => 'HTTP/1.x 404 Not Found',
+    '401' => 'HTTP/1.x 403 Unauthorized',
+    '405' => 'HTTP/1.x 405 Method Not Allowed',
+    '500' => 'HTTP/1.x Internal Server Error'
+  );
+  public static $RETURN_CODES = array(
+    'VALIDATION' => '400',
+    'DATABASE' => '400',
+  );
+}
+?>

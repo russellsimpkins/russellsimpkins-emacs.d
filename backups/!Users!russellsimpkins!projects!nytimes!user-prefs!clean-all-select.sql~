@@ -1,0 +1,44 @@
+SELECT DATE_SCHEDULE_FOR_CANCEL,ignore_cancel_policies,refund_percentage,purchased_claim_code,referring_url,referrer_id FROM nytd_sub_metadata WHERE sub_id=?
+SELECT MAX(time) FROM erightsbundlingresources WHERE userid IN (?,?) AND bindingid=?
+SELECT SUM(billchargehist.total_amount) FROM billchargehist, billfininstrument WHERE billchargehist.status=? AND billfininstrument.id = ? AND billchargehist.account_id = billfininstrument.account_id AND (billchargehist.fin_inst_id = billfininstrument.id OR ((billchargehist.fin_inst_id IS NULL OR billchargehist.fin_inst_id = 0) AND billfininstrument.is_default = 1))
+SELECT SUM(billcredithist.amount) FROM billcredithist, billfininstrument WHERE billcredithist.status = 1 AND billcredithist.type = 1 AND billfininstrument.id = ? AND billcredithist.account_id = billfininstrument.account_id AND (billcredithist.fin_inst_id = billfininstrument.id OR ((billcredithist.fin_inst_id IS NULL OR billcredithist.fin_inst_id = 0) AND billfininstrument.is_default = 1))
+SELECT SUM(billcredithistusage.amount) FROM billcredithistusage, billcredithist, billfininstrument WHERE billcredithist.status = 1 AND billcredithistusage.status = 1 AND billcredithist.type = 1 AND billfininstrument.id = ? AND billcredithistusage.credit_id = billcredithist.id AND billcredithist.account_id = billfininstrument.account_id AND (billcredithist.fin_inst_id = billfininstrument.id OR ((billcredithist.fin_inst_id IS NULL OR billcredithist.fin_inst_id = 0) AND billfininstrument.is_default(+6)
+SELECT account_id, fin_inst_def_id, is_default, is_valid FROM billfininstrument WHERE id=?
+SELECT account_id, status, interval_unit, interval_amount, amount, tax_category_id, create_date, start_date, next_schedule_date, max_num_charges, closed_date, suspend_date, restore_date, suspend_type, fin_inst_id FROM billchargeschedule WHERE id=?
+SELECT adoption_id, license_id, charge_schedule_id, cost_policy_id, termination_override, termination_date FROM erightsadoptionfulfillments WHERE id = 35776281
+
+SELECT chain_id, customer_id, date_created, suspended, billing_account, fin_inst_id, scheduled_suspension, suspension_shift_type, scheduled_cancellation, date_terminated, loop_final_link, coupon_claim_id, cancel_pending, cancel_reason_id, was_cancelled FROM erightssubscriptions WHERE sub_id = 1077866
+
+SELECT content FROM billtext WHERE id=?
+SELECT cost_type, bill_internal, amount, currency_code, tax_category, max_charges, onset_delay, onset_delay_unit, recur_interval, recur_interval_unit FROM erightscostpolicies WHERE id = 181
+SELECT cost_type, bill_internal, amount, currency_code, tax_category, max_charges, onset_delay, onset_delay_unit, recur_interval, recur_interval_unit FROM erightscostpolicies WHERE id = 301
+SELECT count(*) FROM bindings WHERE id=?
+SELECT count(*) FROM erightscostpolicies WHERE id = ?
+SELECT count(*) FROM erightsofferadoptions WHERE id = ?
+SELECT count(*) FROM erightsoffers WHERE id = ?
+SELECT count(*) FROM erightsusers WHERE id=?
+SELECT customer_id, status, create_date, currency_code, credit_limit, balance, non_refundable_credit_balance, refundable_credit_balance, closed_date, suspend_date, restore_date, suspend_type FROM billaccount WHERE id=?
+SELECT date_entered, admin_id, admin_name, text_id FROM billannotation WHERE object_type_id=? and object_id=?
+SELECT id FROM billfininstrument WHERE account_id=? AND is_default=1
+SELECT id FROM bindings WHERE deathcheckdate<=? AND deathdispatched=0 AND immortal=0 AND suspension_date IS NULL
+SELECT id FROM erightsadoptionfulfillments WHERE adoption_id =? ORDER BY id
+SELECT id, account_id, status, create_date, total_amount, total_tax, tax_category_id, charge_schedule_id, fin_inst_id, earliest_clearance_attempt, clear_attempts_remaining FROM billchargehist WHERE account_id=? AND status=? ORDER BY create_date DESC
+SELECT id, adoption_id, charge_schedule_id, cost_policy_id, termination_override, termination_date FROM erightsadoptionfulfillments WHERE license_id = 35779005
+SELECT id, expected_end_date FROM erightscoupentgroupclaims WHERE expected_end_date <=? ORDER BY expected_end_date
+SELECT id, expected_end_date FROM erightscoupentprodclaims WHERE expected_end_date <=? ORDER BY expected_end_date
+SELECT id, licenseid, groupid, productid, name, suspension_date from bindings WHERE id =?
+SELECT id, name, folder_id, created_date, retired_date, enabled, start_date, end_date, cost_policy_id, termination_rule FROM erightsoffers WHERE id IN (1) ORDER BY id
+SELECT id, scheduled_activation FROM erightscoupentitlegroup WHERE activation_dispatched = 0 AND scheduled_activation <= ? AND (scheduled_revocation IS NULL OR scheduled_revocation >= ?) ORDER BY scheduled_activation
+SELECT id, scheduled_activation FROM erightscoupentitleprod WHERE activation_dispatched = 0 AND scheduled_activation <= ? AND (scheduled_revocation IS NULL OR scheduled_revocation >= ?) ORDER BY scheduled_activation
+SELECT id, scheduled_revocation FROM erightscoupentitlegroup WHERE revocation_dispatched = 0 AND scheduled_revocation <= ? ORDER BY scheduled_revocation
+SELECT id, scheduled_revocation FROM erightscoupentitleprod WHERE revocation_dispatched = 0 AND scheduled_revocation <= ? ORDER BY scheduled_revocation
+SELECT id, template_id, cost_policy_id, termination_override, required FROM erightsofferfulfillments WHERE offer_id = 1 ORDER by id
+SELECT link_id FROM erightssublinks WHERE sub_id = 1077866 ORDER BY link_num
+SELECT name, type, product_id, policy_id, cost_policy_id, termination_override FROM erightsfulfilltemplates WHERE id = 1
+SELECT name, value from bindingdata where bindingid=? AND userid=?
+SELECT nextpurge FROM erightssessionpurge where id = 1
+SELECT offer_id, link_id, adoption_date, termination_date, termination_rule, cost_policy_id, charge_schedule_id FROM erightsofferadoptions WHERE id =?
+SELECT sub_id, link_num, activation_offer, date_added, date_activated, date_terminated, jump_sub_id, jump_link_num FROM erightssublinks WHERE link_id = 1078314
+SELECT sub_id, scheduled_cancellation FROM erightssubscriptions WHERE date_terminated IS NULL AND scheduled_cancellation <= ? ORDER BY scheduled_cancellation
+SELECT sub_id, scheduled_suspension FROM erightssubscriptions WHERE scheduled_suspension <= ? AND suspended = 0 AND date_terminated IS NULL ORDER BY scheduled_suspension
+SELECT userids, id FROM erightssessionentries WHERE lastused < ? AND ROWNUM <= 1000 ORDER BY lastused, id

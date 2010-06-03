@@ -1,0 +1,31 @@
+DELIMITER $$
+/* 
+ * Create new insert stored proc 
+ */
+DROP PROCEDURE IF EXISTS NYT_UserProfile_APIKeys_Insert $$
+CREATE DEFINER='nobody@localhost' PROCEDURE NYT_UserProfile_APIKeys_Insert (
+  IN in_key_id           INTEGER UNSIGNED,
+  IN in_private_key      VARCHAR(1000),
+  IN in_public_key       VARCHAR(1000),
+  IN in_private_token    VARCHAR(255),
+  IN in_expires_on       DATETIME
+)  SQL SECURITY INVOKER
+BEGIN
+   INSERT INTO apikeys_account
+    (
+    key_id,
+    private_key,
+    public_key,
+    private_token,
+    created_on,
+    updated_on,
+    expires_on
+    )
+  VALUES (
+    in_user_id,
+    NOW(),
+    NOW(),
+    in_disp_name,
+    @v_tp_user
+  );
+END $$

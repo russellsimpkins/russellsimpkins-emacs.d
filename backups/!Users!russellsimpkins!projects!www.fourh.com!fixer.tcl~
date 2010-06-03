@@ -1,0 +1,21 @@
+#!/usr/bin/tclsh
+
+set ifile [open signup.php r]
+while {![eof $ifile]} {
+
+    set data [gets $ifile]
+    if { [regexp {<input name=} $data]} {
+        # we have our data now - time to fix it to add value="<?=$name?>"
+        regsub {.*<input name="} $data {} ndata
+        regsub {".*} $ndata {} ndata
+        set single {'}
+        set replacement ""
+        append replacement "<input value=\"<?=" {$} "vars" {['} $ndata {']?>"} 
+        regsub {<input} $data $replacement  idata
+       puts stdout $idata
+    } else {
+       #puts stdout $data
+    }
+
+}
+close $ifile

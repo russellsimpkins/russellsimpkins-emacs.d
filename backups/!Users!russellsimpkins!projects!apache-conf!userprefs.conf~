@@ -1,0 +1,25 @@
+<Directory /Users/russellsimpkins/projects/nytimes/userprefs>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+</Directory>
+<Directory /Users/russellsimpkins/projects/nytimes/userprefs>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+</Directory>
+
+<VirtualHost *:80>
+    Alias /icons/ "/usr/share/httpd/icons/"
+    ServerName userprefs.com
+    ServerAlias www.userprefs.com
+    DocumentRoot /Users/russellsimpkins/projects/nytimes/user-prefs
+    DirectoryIndex index.php
+    <IfModule mod_rewrite.c>
+        RewriteEngine On
+        RewriteRule ^/svc/v3/up/apikeys/.* /Users/russellsimpkins/projects/nytimes/user-prefs/keys-api/www/unprotected/svc/KeyService.php [L]
+     
+    </IfModule>
+</VirtualHost>
