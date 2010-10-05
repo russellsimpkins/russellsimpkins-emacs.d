@@ -1,8 +1,0 @@
-I did configure with 
-
-./configure --prefix=/usr/local/php5 -with-gd --with-jpeg-dir=/opt/local --with-png-dir=/opt/local --without-iconv --with-mysql=/usr/local/mysql --with-pdo-mysql=/usr/local/mysql --with-apxs2=/usr/sbin/apxs --with-mcrypt=/opt/local
-
-Error with make and Snow Leopard required that I add -lresolv to end of EXTRA_LIBS e.g.
-
-EXTRA_LIBS = -lmysqlclient -lmcrypt -lltdl -lpng -lz -ljpeg -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lmysqlclient -lz -lm -lmygcc -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lxml2 -lz -licucore -lm -lresolv
-

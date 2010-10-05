@@ -1,2 +1,0 @@
-#!/bin/bash
-mvn install:install-file -DgroupId=com.paymentech.orbital -DartifactId=sdk -Dversion=6.3.0 -Dfile=PaymentechSDK.jar

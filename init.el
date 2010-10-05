@@ -17,6 +17,7 @@
 
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
+;;(setq dotfiles-dir '/Users/russellsimpkins/.emacs.d∑')
 (add-to-list 'load-path dotfiles-dir)
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
@@ -37,7 +38,6 @@
 (require 'saveplace)
 (require 'ffap)
 (require 'uniquify)
-(require 'ansi-color)
 (require 'recentf)
 
 ;; backport some functionality to Emacs 22 if needed
@@ -63,9 +63,7 @@
 (require 'http-post-simple)
 (require 'http-post)
 (require 'http-cookies)
-(require 'regi-test-1)
-(require 'regi-test-2)
-(require 'php-mode)
+;;(require 'php-mode)
 
 ;; You can keep system- or user-specific customizations here
 (setq system-specific-config (concat dotfiles-dir system-name ".el")
@@ -92,29 +90,12 @@
 (global-set-key (kbd "C-x {") 'shrink-window-horizontally)
 (global-set-key (kbd "C-x +") 'balance-windows)
 (global-set-key (kbd "C-c C-c") 'comint-interrupt-subjob)
+(global-set-key (kbd "C-x c") 'kill-ring-save)
+(global-set-key (kbd "C-x v") 'yank)
 
-;; setting the default font size
-(set-face-attribute 'default
-                    nil
-                    :height 200)
+
 ;; set the starting fame height
 ;;(set-frame-height 'default 30)
-(require 'color-theme)
-(setq my-color-themes (list 'color-theme-billw 'color-theme-jsc-dark 
-                            'color-theme-sitaramv-solaris 'color-theme-resolve
-                            'color-theme-classic 'color-theme-jonadabian-slate
-                            'color-theme-kingsajz 'color-theme-shaman
-                            'color-theme-subtle-blue 'color-theme-snowish
-                            'color-theme-sitaramv-nt 'color-theme-wheat))
-(setq doremi-color-themes my-color-themes) ; Otherwise, cycles among _all_ themes.
-(defun doremi-color-themes ()
-    "Successively cycle among color themes."
-    (interactive)
-    (doremi (lambda (newval) (funcall newval) newval) ; update fn - just call theme
-            (car (last doremi-color-themes)) ; start with last theme
-            nil                           ; ignored
-            nil                           ; ignored
-            doremi-color-themes))         ; themes to cycle through
 
 (setq ido-enable-flex-matching t)
 (setq ido-create-new-buffer 'always)
@@ -124,9 +105,8 @@
 (setq ido-use-filename-at-point t) ;; prefer file names near point
 (setq mac-option-modifier 'meta)
 (setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
 
-;;(setq-default indent-tabs-mode nil)
-;;(color-theme-twilight)
 ;;; init.el ends here
 
 (column-number-mode 1)
@@ -139,7 +119,18 @@
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   )
+
+;; *********************************************************
+;; Stuff if you're running in a gui
+;; *********************************************************
 (defun window-settings ()
+  ;; give us frame resizing functions
+  ;;(require 'autofit-frame)
+  (require 'frame-cmds)
+  (require 'ansi-color)
+  
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
   ;; cedet
   (add-to-list 'load-path (concat dotfiles-dir "/cedet"))
   (add-to-list 'load-path (concat dotfiles-dir "/cedet/common"))
@@ -147,21 +138,22 @@
   (load-file "~/.emacs.d/cedet/common/cedet.el")
   (global-ede-mode 1)                      ; Enable the Project management system
   (semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
-  (global-srecode-minor-mode 1)            ; Enable template insertion menu
+  ;;(global-srecode-minor-mode 1)            ; Enable template insertion menu
   ;; * This enables the database and idle reparse engines
   (semantic-load-enable-minimum-features)
   ;; * This enables some tools useful for coding, such as summary mode
-  ;;   imenu support, and the semantic navigator
+  ;; * imenu support, and the semantic navigator
   (semantic-load-enable-code-helpers)
-  ;; for elib support of java
-  (add-to-list 'load-path (expand-file-name "~/.emacs.d/jde/lisp"))
-  (setq load-path (append (list "/usr/local/share/emacs/site-lisp/elib")
-                          load-path))
-  (require 'jde)
+  ;; * for elib support of java
+  ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/jde/lisp"))
+  ;; (setq load-path (append (list "/usr/local/share/emacs/site-lisp/elib") load-path))
+  ;; * turn on cedit if you turn this on
+  ;;(require 'jde)
   ;; ecb
   (add-to-list 'load-path (concat dotfiles-dir "/ecb"))
-  (require 'ecb)
-  (regen-autoloads)
+  ;; * turn on cedit if you turn this on
+  ;;(require 'ecb)
+  ;;(regen-autoloads)
   (load custom-file 'noerror)
 
   (defun sacha/increase-font-size ()
@@ -180,7 +172,31 @@
                                     (face-attribute 'default :height)))))
   (global-set-key (kbd "C-+") 'sacha/increase-font-size)
   (global-set-key (kbd "C--") 'sacha/decrease-font-size)
- )
+
+
+  (require 'color-theme)
+  (setq my-color-themes (list 'color-theme-billw 'color-theme-jsc-dark 
+                            'color-theme-sitaramv-solaris 'color-theme-resolve
+                            'color-theme-classic 'color-theme-jonadabian-slate
+                            'color-theme-kingsajz 'color-theme-shaman
+                            'color-theme-subtle-blue 'color-theme-snowish
+                            'color-theme-sitaramv-nt 'color-theme-wheat))
+  (setq doremi-color-themes my-color-themes) ; Otherwise, cycles among _all_ themes.
+  (defun doremi-color-themes ()
+    "Successively cycle among color themes."
+    (interactive)
+    (doremi (lambda (newval) (funcall newval) newval) ; update fn - just call theme
+            (car (last doremi-color-themes)) ; start with last theme
+            nil                           ; ignored
+            nil                           ; ignored
+            doremi-color-themes))         ; themes to cycle through
+
+  ;; setting the default font size
+  (set-face-attribute 'default
+                    nil
+                    :height 200)
+  (maximize-frame)
+)
 (if window-system
     (window-settings)
     (no-windows)
