@@ -20,11 +20,7 @@
 (add-to-list 'load-path dotfiles-dir)
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
-(add-to-list 'load-path (concat dotfiles-dir "/http-post"))
-(add-to-list 'load-path (concat dotfiles-dir "/tests"))
-
-;;(setq autoload-file (concat dotfiles-dir "/http-post/http-post.el"))
-;;(setq autoload-file (concat dotfiles-dir "/http-post/http-cookies.el"))
+;;(add-to-list 'load-path (concat dotfiles-dir "/tests"))
 
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
@@ -60,11 +56,6 @@
 (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
-(require 'http-post-simple)
-(require 'http-post)
-(require 'http-cookies)
-(require 'regi-test-1)
-(require 'regi-test-2)
 (require 'php-mode)
 
 ;; You can keep system- or user-specific customizations here
