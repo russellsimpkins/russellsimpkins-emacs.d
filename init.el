@@ -17,13 +17,13 @@
 
 (setq dotfiles-dir (file-name-directory
                     (or (buffer-file-name) load-file-name)))
-;;(setq dotfiles-dir '/Users/russellsimpkins/.emacs.d∑')
+;;(setq dotfiles-dir '/Users/russellsimpkins/.emacs.d')
 (add-to-list 'load-path dotfiles-dir)
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
-
+;; (load (concat dotfiles-dir "elpa-to-submit/nxhtml/autostart.el"))
 ;;(setq autoload-file (concat dotfiles-dir "/http-post/http-post.el"))
 ;;(setq autoload-file (concat dotfiles-dir "/http-post/http-cookies.el"))
 
@@ -63,8 +63,21 @@
 (require 'http-post-simple)
 (require 'http-post)
 (require 'http-cookies)
-;;(require 'php-mode)
+(require 'js-beautify)
+(require 'php-mode)
 
+(require 'tramp)
+(setq tramp-default-method "scp")
+
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;;(require 'php-mode)
+;;(require 'php-electric)
+;;(add-hook 'php-mode-hook '(lambda () (php-electric-mode)))
+
+;;(require 'php-mode)
+(eval-after-load "sql"
+   '(load-library "tsql-indent"))
 ;; You can keep system- or user-specific customizations here
 (setq system-specific-config (concat dotfiles-dir system-name ".el")
       user-specific-config (concat dotfiles-dir user-login-name ".el")
@@ -85,18 +98,33 @@
 (global-set-key "\C-x\m" 'execute-extended-command)
 (global-set-key (kbd "C-x 6")  'enlarge-window)
 (global-set-key (kbd "C-x 5") 'shrink-window)
-(global-set-key (kbd "C-x C-g") 'query-replace)
+; for font size adjust
 (global-set-key (kbd "C-x }") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-x {") 'shrink-window-horizontally)
 (global-set-key (kbd "C-x +") 'balance-windows)
+; search replace
+(global-set-key (kbd "C-x C-g") 'query-replace)
+(global-set-key (kbd "C-x C-z") 'query-replace-regexp)
+
+; add key to quit a shell job
 (global-set-key (kbd "C-c C-c") 'comint-interrupt-subjob)
-(global-set-key (kbd "C-x c") 'kill-ring-save)
-(global-set-key (kbd "C-x v") 'yank)
+
+;; map to do a save as e.g. for save as unix
+(global-set-key (kbd "C-x C-a") 'set-buffer-file-coding-system)
+
+; add key for describe char - will give ascii code for a char
+(global-set-key (kbd "C-x C-l") 'describe-char)
+
+; add key code to beautify javascript
+(global-set-key (kbd "C-x j b") 'js-beautify-region)
+
+;(global-set-key (kbd "C-x c") 'kill-ring-save)
+;(global-set-key (kbd "C-x v") 'yank)
 
 
 ;; set the starting fame height
 ;;(set-frame-height 'default 30)
-
+(setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
 (setq ido-create-new-buffer 'always)
 (setq ido-enable-last-directory-history nil)
@@ -106,13 +134,20 @@
 (setq mac-option-modifier 'meta)
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
-
+(setq-default c-basic-offset 4)
+(setq-default fill-column 999)
+;; (setq-default fill-column 72)
+;; let emacs find <> as well balanced parens as [] and () are
+(modify-syntax-entry ?> "(<")
+(modify-syntax-entry ?< ")>")
 ;;; init.el ends here
 
 (column-number-mode 1)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
+;; map stuff ending in .com to the Unix conf-mode
+(add-to-list 'auto-mode-alist '("\\.com$" . conf-mode))
 
 (defun no-windows ()
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -129,8 +164,8 @@
   (require 'frame-cmds)
   (require 'ansi-color)
   
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
+  (menu-bar-mode 1)
+  (tool-bar-mode 0)
   ;; cedet
   (add-to-list 'load-path (concat dotfiles-dir "/cedet"))
   (add-to-list 'load-path (concat dotfiles-dir "/cedet/common"))
@@ -145,17 +180,22 @@
   ;; * imenu support, and the semantic navigator
   (semantic-load-enable-code-helpers)
   ;; * for elib support of java
-  ;; (add-to-list 'load-path (expand-file-name "~/.emacs.d/jde/lisp"))
-  ;; (setq load-path (append (list "/usr/local/share/emacs/site-lisp/elib") load-path))
+  (add-to-list 'load-path (expand-file-name "~/.emacs.d/jde/lisp"))
+  (setq load-path (append (list "/usr/local/share/emacs/site-lisp/elib") load-path))
   ;; * turn on cedit if you turn this on
-  ;;(require 'jde)
+  (require 'jde)
   ;; ecb
   (add-to-list 'load-path (concat dotfiles-dir "/ecb"))
   ;; * turn on cedit if you turn this on
-  ;;(require 'ecb)
-  ;;(regen-autoloads)
+  (require 'ecb)
+  (regen-autoloads)
   (load custom-file 'noerror)
-
+  (add-hook 'php-mode-user-hook 'semantic-default-java-setup)
+;;  (add-hook 'php-mode-user-hook
+;;  (lambda ()
+;;    (setq imenu-create-index-function
+;;    'semantic-create-imenu-index)
+;;  ))
   (defun sacha/increase-font-size ()
     (interactive)
     (set-face-attribute 'default
@@ -194,9 +234,13 @@
   ;; setting the default font size
   (set-face-attribute 'default
                     nil
-                    :height 200)
+                    :height 180)
   (maximize-frame)
-)
+  )
+
+(defun indent-buffer ()
+  (interactive)
+  (indent-region (point-min) (point-max)))
 (if window-system
     (window-settings)
     (no-windows)

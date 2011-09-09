@@ -1266,8 +1266,8 @@ space occupied by a standalone minibuffer, if any."
   (let ((bounds (if include-mini-p
                     (available-screen-pixel-bounds)
                   (effective-screen-pixel-bounds))))
-    (- (cadddr bounds) (cadr bounds) 40))) ; Y1 - Y0 - fixed size for
-                                        ; mac menu
+    (- (cadddr bounds) (cadr bounds) 90))) ; Y1 - Y0 - fixed size for
+                                        ; mac menu RSS
 
 ;; Inspired by `sk-grow-frame' from Sarir Khamsi [sarir.khamsi@raytheon.com]
 ;;;###autoload
