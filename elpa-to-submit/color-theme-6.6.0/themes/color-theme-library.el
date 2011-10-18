@@ -3636,7 +3636,7 @@ fonts."
       (width . 130)
       (height . 50)
       (background-color . "black")
-      (foreground-color . "grey85")
+      (foreground-color . "grey46")
       (background-mode . dark)
       (mouse-color . "grey46") ;; grey85
       (cursor-color . "grey46")) ;; grey85
