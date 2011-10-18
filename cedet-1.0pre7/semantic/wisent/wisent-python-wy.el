@@ -3,7 +3,7 @@
 ;; Copyright (C) 2002, 2003, 2004, 2007 Richard Kim
 
 ;; Author: Russell Simpkins <russellsimpkins@russell-simpkinss-macbook-pro-3.local>
-;; Created: 2010-05-28 10:40:23-0400
+;; Created: 2010-10-28 09:49:21-0400
 ;; Keywords: syntax
 ;; X-RCS: $Id$
 

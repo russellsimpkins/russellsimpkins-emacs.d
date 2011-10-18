@@ -235,6 +235,7 @@
 %keyword T_INCLUDE_ONCE    "include_once"
 %keyword T_REQUIRE         "require"
 %keyword T_REQUIRE_ONCE    "require_once"
+%keyword T_NYTD_REQUIRE    "nytd_require"
 %keyword T_USE             "use"
 %keyword T_GLOBAL          "global"
 %keyword T_ISSET           "isset"
@@ -319,7 +320,7 @@
 %keyword _DEPRECATED  "@deprecated"
 %put     _DEPRECATED  phpdoc (seq 12 usage (type function variable) opt t) 
 
-%left T_INCLUDE T_INCLUDE_ONCE T_EVAL T_REQUIRE T_REQUIRE_ONCE
+%left T_INCLUDE T_INCLUDE_ONCE T_EVAL T_REQUIRE T_REQUIRE_ONCE T_NYTD_REQUIRE
 %left T_COMMA
 %left T_LOGICAL_OR
 %left T_LOGICAL_XOR
@@ -383,6 +384,8 @@ include_declaration
   | T_REQUIRE require_expr T_SEMI
     (identity $2)
   | T_REQUIRE_ONCE require_expr T_SEMI
+    (identity $2)
+  | T_NYTD_REQUIRE require_expr T_SEMI
     (identity $2)
   | T_INCLUDE require_expr T_SEMI
     (identity $2)

@@ -3,7 +3,7 @@
 ;; Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2008 Eric M. Ludlam
 
 ;; Author: Russell Simpkins <russellsimpkins@russell-simpkinss-macbook-pro-3.local>
-;; Created: 2010-05-28 10:40:26-0400
+;; Created: 2010-10-27 17:42:29-0400
 ;; Keywords: syntax
 ;; X-RCS: $Id$
 
