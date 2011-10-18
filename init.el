@@ -21,7 +21,6 @@
 (add-to-list 'load-path dotfiles-dir)
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
-
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
 ;; (load (concat dotfiles-dir "elpa-to-submit/nxhtml/autostart.el"))
