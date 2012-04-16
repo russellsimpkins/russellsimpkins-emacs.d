@@ -39,7 +39,7 @@
 (require 'ffap)
 (require 'uniquify)
 (require 'recentf)
-
+(require 'mustache-mode)
 ;; backport some functionality to Emacs 22 if needed
 (require 'dominating-file)
 
@@ -60,7 +60,7 @@
 (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
-(require 'http-post-simple)
+;(require 'http-post-simple)
 (require 'http-post)
 (require 'http-cookies)
 (require 'js-beautify)
