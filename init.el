@@ -23,9 +23,6 @@
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
-;; (load (concat dotfiles-dir "elpa-to-submit/nxhtml/autostart.el"))
-;;(setq autoload-file (concat dotfiles-dir "/http-post/http-post.el"))
-;;(setq autoload-file (concat dotfiles-dir "/http-post/http-cookies.el"))
 
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
@@ -48,9 +45,7 @@
 (package-initialize)
 (require 'starter-kit-elpa)
 
-;;(load "elpa-to-submit/nxhtml/autostart")
 ;; Load up starter kit customizations
-
 (require 'starter-kit-defuns)
 (require 'starter-kit-bindings)
 (require 'starter-kit-misc)
@@ -60,17 +55,16 @@
 (require 'starter-kit-perl)
 (require 'starter-kit-ruby)
 (require 'starter-kit-js)
-;(require 'http-post-simple)
 (require 'http-post)
 (require 'http-cookies)
 (require 'js-beautify)
 (require 'php-mode)
-
 (require 'tramp)
+(require 'go-mode)
 (setq tramp-default-method "scp")
 
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;;(autoload 'js2-mode "js2" nil t)
+;;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;;(require 'php-mode)
 ;;(require 'php-electric)
 ;;(add-hook 'php-mode-hook '(lambda () (php-electric-mode)))
@@ -118,12 +112,6 @@
 ; add key code to beautify javascript
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
 
-;(global-set-key (kbd "C-x c") 'kill-ring-save)
-;(global-set-key (kbd "C-x v") 'yank)
-
-
-;; set the starting fame height
-;;(set-frame-height 'default 30)
 (setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
 (setq ido-create-new-buffer 'always)
@@ -135,7 +123,7 @@
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
-(setq-default fill-column 999)
+(setq-default fill-column 9999)
 ;; (setq-default fill-column 72)
 ;; let emacs find <> as well balanced parens as [] and () are
 (modify-syntax-entry ?> "(<")
@@ -191,11 +179,7 @@
   (regen-autoloads)
   (load custom-file 'noerror)
   (add-hook 'php-mode-user-hook 'semantic-default-java-setup)
-;;  (add-hook 'php-mode-user-hook
-;;  (lambda ()
-;;    (setq imenu-create-index-function
-;;    'semantic-create-imenu-index)
-;;  ))
+
   (defun sacha/increase-font-size ()
     (interactive)
     (set-face-attribute 'default
@@ -226,7 +210,6 @@
        (bold ((t (:bold t))))
        (bold-italic ((t (:italic t :bold t))))
        (default ((t (nil))))
-       
        (font-lock-builtin-face ((t (:italic t :foreground "#a96da0"))))
        (font-lock-comment-face ((t (:italic t :foreground "#bbbbbb"))))
        (font-lock-comment-delimiter-face ((t (:foreground "#666666"))))
@@ -262,14 +245,9 @@
             nil                           ; ignored
             nil                           ; ignored
             doremi-color-themes))         ; themes to cycle through
-;;  (color-theme-djcb-dark)
+
   (color-theme-midnight)
-;;  (color-theme-zenburn)
-  ;;( color-theme-arjen)
-  ;;(color-theme-twilight)
-  ;;(color-theme-comidia)
-  ;;(color-theme-hober)
-  ;;(color-theme-tty-dark)
+
   ;; setting the default font size
   (set-face-attribute 'default
                     nil
