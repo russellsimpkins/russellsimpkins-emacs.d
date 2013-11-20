@@ -23,7 +23,7 @@
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
-
+(add-to-list 'load-path (concat dotfiles-dir "/feature-mode-0.4"))
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
 (setq custom-file (concat dotfiles-dir "custom.el"))
@@ -61,6 +61,10 @@
 (require 'php-mode)
 (require 'tramp)
 (require 'go-mode)
+(require 'feature-mode)
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
 (setq tramp-default-method "scp")
 
 ;;(autoload 'js2-mode "js2" nil t)
@@ -111,7 +115,7 @@
 
 ; add key code to beautify javascript
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
-
+(define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
 (setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
 (setq ido-create-new-buffer 'always)
@@ -121,7 +125,7 @@
 (setq ido-use-filename-at-point t) ;; prefer file names near point
 (setq mac-option-modifier 'meta)
 (setq-default tab-width 4)
-(setq-default indent-tabs-mode nil)
+;(setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
 (setq-default fill-column 9999)
 ;; (setq-default fill-column 72)
@@ -137,14 +141,19 @@
 ;; map stuff ending in .com to the Unix conf-mode
 (add-to-list 'auto-mode-alist '("\\.com$" . conf-mode))
 
+(defun indent-buffer ()
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
 (defun no-windows ()
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  )
+
+)
 
 ;; *********************************************************
-;; Stuff if you're running in a gui
+;; Stuff if you're not in a terminal
 ;; *********************************************************
 (defun window-settings ()
   ;; give us frame resizing functions
@@ -161,7 +170,7 @@
   (load-file "~/.emacs.d/cedet/common/cedet.el")
   (global-ede-mode 1)                      ; Enable the Project management system
   (semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
-  ;;(global-srecode-minor-mode 1)            ; Enable template insertion menu
+  (global-srecode-minor-mode 1)            ; Enable template insertion menu
   ;; * This enables the database and idle reparse engines
   (semantic-load-enable-minimum-features)
   ;; * This enables some tools useful for coding, such as summary mode
@@ -175,7 +184,7 @@
   ;; ecb
   (add-to-list 'load-path (concat dotfiles-dir "/ecb"))
   ;; * turn on cedit if you turn this on
-  ;;(require 'ecb)
+  (require 'ecb)
   (regen-autoloads)
   (load custom-file 'noerror)
   (add-hook 'php-mode-user-hook 'semantic-default-java-setup)
@@ -194,10 +203,12 @@
                         :height
                         (floor (* 0.9
                                     (face-attribute 'default :height)))))
+
   (global-set-key (kbd "C-+") 'sacha/increase-font-size)
   (global-set-key (kbd "C--") 'sacha/decrease-font-size)
-
-
+;  (global-set-key (kbd "C-+") 'text-scale-increase)
+;  (global-set-key (kbd "C--") 'text-scale-decrease)
+  
   (require 'color-theme)
   (defun color-theme-djcb-dark ()
   "dark color theme created by djcb, Jan. 2009."
@@ -255,10 +266,10 @@
   (maximize-frame)
   )
 
-(defun indent-buffer ()
-  (interactive)
-  (indent-region (point-min) (point-max)))
+
+
 (if window-system
     (window-settings)
     (no-windows)
 )
+
