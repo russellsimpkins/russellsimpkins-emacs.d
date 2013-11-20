@@ -1,5 +1,5 @@
 ;;; js-beautify.el -- beautify some js code
-(defcustom rhino-jar "~/software/rhino1_7R"
+(defcustom rhino-jar "~/software/rhino1_7R2"
        "Location of the rhino jar e.g. rhino1_7R2"
        :type '(string)
        :group 'data)
