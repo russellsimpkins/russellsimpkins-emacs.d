@@ -24,6 +24,8 @@
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
 (add-to-list 'load-path (concat dotfiles-dir "/feature-mode-0.4"))
+(add-to-list 'load-path (concat dotfiles-dir "/smarttabs"))
+(add-to-list 'load-path (concat dotfiles-dir "/puppet-syntax-emacs"))
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
 (setq custom-file (concat dotfiles-dir "custom.el"))
@@ -62,11 +64,16 @@
 (require 'tramp)
 (require 'go-mode)
 (require 'feature-mode)
-(require 'go-autocomplete)
+;;(require 'go-autocomplete)
 (require 'auto-complete-config)
+(require 'puppet-mode)
+;; smart tabs
+;;(require 'smart-tabs-mode)
+;;(smart-tabs-insinuate 'c 'javascript 'c++)
+
 (ac-config-default)
 (setq tramp-default-method "scp")
-
+(add-to-list 'auto-mode-alist '("\\.pp$". puppet-mode))
 ;;(autoload 'js2-mode "js2" nil t)
 ;;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;;(require 'php-mode)
@@ -74,8 +81,8 @@
 ;;(add-hook 'php-mode-hook '(lambda () (php-electric-mode)))
 
 ;;(require 'php-mode)
-(eval-after-load "sql"
-   '(load-library "tsql-indent"))
+;;(eval-after-load "sql"
+;;   '(load-library "tsql-indent"))
 ;; You can keep system- or user-specific customizations here
 (setq system-specific-config (concat dotfiles-dir system-name ".el")
       user-specific-config (concat dotfiles-dir user-login-name ".el")
@@ -86,7 +93,7 @@
 (if (file-exists-p system-specific-config) (load system-specific-config))
 (if (file-exists-p user-specific-config) (load user-specific-config))
 (if (file-exists-p user-specific-dir)
-  (mapc #'load (directory-files user-specific-dir nil ".*el$")))
+    (mapc #'load (directory-files user-specific-dir nil ".*el$")))
 
 
 ;;(recentf-mode 1)
@@ -96,26 +103,27 @@
 (global-set-key "\C-x\m" 'execute-extended-command)
 (global-set-key (kbd "C-x 6")  'enlarge-window)
 (global-set-key (kbd "C-x 5") 'shrink-window)
-; for font size adjust
+					; for font size adjust
 (global-set-key (kbd "C-x }") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-x {") 'shrink-window-horizontally)
 (global-set-key (kbd "C-x +") 'balance-windows)
-; search replace
+					; search replace
 (global-set-key (kbd "C-x C-g") 'query-replace)
 (global-set-key (kbd "C-x C-z") 'query-replace-regexp)
 
-; add key to quit a shell job
+					; add key to quit a shell job
 (global-set-key (kbd "C-c C-c") 'comint-interrupt-subjob)
 
 ;; map to do a save as e.g. for save as unix
 (global-set-key (kbd "C-x C-a") 'set-buffer-file-coding-system)
 
-; add key for describe char - will give ascii code for a char
+					; add key for describe char - will give ascii code for a char
 (global-set-key (kbd "C-x C-l") 'describe-char)
 
-; add key code to beautify javascript
+					; add key code to beautify javascript
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+;;(setq ac-quick-help-delay 3)
 (setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
 (setq ido-create-new-buffer 'always)
@@ -124,14 +132,14 @@
 (setq ido-show-dot-for-dired t) ;; put . as the first item
 (setq ido-use-filename-at-point t) ;; prefer file names near point
 (setq mac-option-modifier 'meta)
-(setq-default tab-width 4)
-;(setq-default indent-tabs-mode nil)
+(setq-default tab-width 8)
+(setq-default indent-tabs-mode 1)
 (setq-default c-basic-offset 4)
 (setq-default fill-column 9999)
 ;; (setq-default fill-column 72)
 ;; let emacs find <> as well balanced parens as [] and () are
 (modify-syntax-entry ?> "(<")
-(modify-syntax-entry ?< ")>")
+		     (modify-syntax-entry ?< ")>")
 ;;; init.el ends here
 
 (column-number-mode 1)
@@ -141,16 +149,64 @@
 ;; map stuff ending in .com to the Unix conf-mode
 (add-to-list 'auto-mode-alist '("\\.com$" . conf-mode))
 
+
+;; smart tabs config
+;;(setq cua-auto-tabify-rectangles nil)
+;;(defadvice align (around smart-tabs activate)
+;;  (let ((indent-tabs-mode nil)) ad-do-it))
+;;(defadvice align-regexp (around smart-tabs activate)
+;;  (let ((indent-tabs-mode nil)) ad-do-it))
+;;(defadvice indent-relative (around smart-tabs activate)
+;;  (let ((indent-tabs-mode nil)) ad-do-it))
+;;(defadvice indent-according-to-mode (around smart-tabs activate)
+;;  (let ((indent-tabs-mode indent-tabs-mode))
+;;    (if (memq indent-line-function
+;; 	      '(indent-relative
+;; 		indent-relative-maybe))
+;; 	(setq indent-tabs-mode nil))
+;;    ad-do-it))
+;;(defmacro smart-tabs-advice (function offset)
+;;  `(progn
+;;     (defvaralias ',offset 'tab-width)
+;;     (defadvice ,function (around smart-tabs activate)
+;;       (cond
+;; 	(indent-tabs-mode
+;; 	 (save-excursion
+;; 	   (beginning-of-line)
+;; 	   (while (looking-at "\t*\\( +\\)\t+")
+;; 	     (replace-match "" nil nil nil 1)))
+;; 	 (setq tab-width tab-width)
+;; 	 (let ((tab-width fill-column)
+;; 	       (,offset fill-column)
+;; 	       (wstart (window-start)))
+;; 	   (unwind-protect
+;; 	       (progn ad-do-it)
+;; 	     (set-window-start (selected-window) wstart))))
+;; 	(t
+;; 	 ad-do-it)))))
+;;(smart-tabs-advice c-indent-line c-basic-offset)
+;;(smart-tabs-advice c-indent-region c-basic-offset)
+
 (defun indent-buffer ()
   (interactive)
   (indent-region (point-min) (point-max)))
+
+(defun terminal-init-screen ()
+  "Terminal initialization function for screen."
+  ;; Use the xterm color initialization code.
+  ;; (xterm-register-default-colors)
+  (tty-set-up-initial-frame-faces)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+)
 
 (defun no-windows ()
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-)
+  (terminal-init-screen)
+  )
 
 ;; *********************************************************
 ;; Stuff if you're not in a terminal
@@ -188,7 +244,7 @@
   (regen-autoloads)
   (load custom-file 'noerror)
   (add-hook 'php-mode-user-hook 'semantic-default-java-setup)
-
+  ;; (ecb-activate)
   (defun sacha/increase-font-size ()
     (interactive)
     (set-face-attribute 'default
@@ -202,22 +258,22 @@
                         nil
                         :height
                         (floor (* 0.9
-                                    (face-attribute 'default :height)))))
+				  (face-attribute 'default :height)))))
 
   (global-set-key (kbd "C-+") 'sacha/increase-font-size)
   (global-set-key (kbd "C--") 'sacha/decrease-font-size)
-;  (global-set-key (kbd "C-+") 'text-scale-increase)
-;  (global-set-key (kbd "C--") 'text-scale-decrease)
+					;  (global-set-key (kbd "C-+") 'text-scale-increase)
+					;  (global-set-key (kbd "C--") 'text-scale-decrease)
   
   (require 'color-theme)
   (defun color-theme-djcb-dark ()
-  "dark color theme created by djcb, Jan. 2009."
-  (interactive)
-  (color-theme-install
-    '(color-theme-djcb-dark
+    "dark color theme created by djcb, Jan. 2009."
+    (interactive)
+    (color-theme-install
+     '(color-theme-djcb-dark
        ((foreground-color . "#a9eadf")
-         (background-color . "black") 
-         (background-mode . dark))
+	(background-color . "black") 
+	(background-mode . dark))
        (bold ((t (:bold t))))
        (bold-italic ((t (:italic t :bold t))))
        (default ((t (nil))))
@@ -235,18 +291,18 @@
        (font-lock-type-face ((t (:bold t :foreground "#364498"))))
        (font-lock-variable-name-face ((t (:foreground "#7685de"))))
        (font-lock-warning-face ((t (:bold t :italic nil :underline nil 
-                                     :foreground "yellow"))))
+					  :foreground "yellow"))))
        (hl-line ((t (:background "#112233"))))
        (mode-line ((t (:foreground "#ffffff" :background "#333333"))))
        (region ((t (:foreground nil :background "#555555"))))
        (show-paren-match-face ((t (:bold t :foreground "#ffffff" 
-                                    :background "#050505")))))))
+					 :background "#050505")))))))
   (setq my-color-themes (list 'color-theme-billw 'color-theme-jsc-dark 
-                            'color-theme-sitaramv-solaris 'color-theme-resolve
-                            'color-theme-classic 'color-theme-jonadabian-slate
-                            'color-theme-kingsajz 'color-theme-shaman
-                            'color-theme-subtle-blue 'color-theme-snowish
-                            'color-theme-sitaramv-nt 'color-theme-wheat))
+			      'color-theme-sitaramv-solaris 'color-theme-resolve
+			      'color-theme-classic 'color-theme-jonadabian-slate
+			      'color-theme-kingsajz 'color-theme-shaman
+			      'color-theme-subtle-blue 'color-theme-snowish
+			      'color-theme-sitaramv-nt 'color-theme-wheat))
   (setq doremi-color-themes my-color-themes) ; Otherwise, cycles among _all_ themes.
   (defun doremi-color-themes ()
     "Successively cycle among color themes."
@@ -261,15 +317,15 @@
 
   ;; setting the default font size
   (set-face-attribute 'default
-                    nil
-                    :height 180)
+		      nil
+		      :height 180)
   (maximize-frame)
   )
 
 
 
 (if window-system
-    (window-settings)
-    (no-windows)
+  (window-settings)
+  (no-windows)
 )
 
