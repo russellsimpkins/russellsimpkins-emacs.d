@@ -26,6 +26,10 @@
 (add-to-list 'load-path (concat dotfiles-dir "/feature-mode-0.4"))
 (add-to-list 'load-path (concat dotfiles-dir "/smarttabs"))
 (add-to-list 'load-path (concat dotfiles-dir "/puppet-syntax-emacs"))
+(add-to-list 'load-path (concat dotfiles-dir "/yaml-mode"))
+(add-to-list 'load-path (concat dotfiles-dir "/helm"))
+(add-to-list 'load-path (concat dotfiles-dir "/elpa/magit-0.8.1"))
+
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
 (setq custom-file (concat dotfiles-dir "custom.el"))
@@ -39,9 +43,13 @@
 (require 'uniquify)
 (require 'recentf)
 (require 'mustache-mode)
+(require 'yaml-mode)
 ;; backport some functionality to Emacs 22 if needed
 (require 'dominating-file)
-
+;; git support
+(require 'magit)
+(require 'git)
+(require 'git-blame)
 ;; Load up ELPA, the package manager
 (require 'package)
 (package-initialize)
@@ -67,6 +75,26 @@
 ;;(require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'puppet-mode)
+
+
+;; must set before helm-config,  otherwise helm use default
+;; prefix "C-x c", which is inconvenient because you can
+;; accidentially pressed "C-x C-c"
+(setq helm-command-prefix-key "C-c h")
+(require 'helm-config)
+(require 'helm-eshell)
+(require 'helm-files)
+(require 'helm-grep)
+
+
+
+
+
+
+
+
+
+
 ;; smart tabs
 ;;(require 'smart-tabs-mode)
 ;;(smart-tabs-insinuate 'c 'javascript 'c++)
@@ -132,8 +160,8 @@
 (setq ido-show-dot-for-dired t) ;; put . as the first item
 (setq ido-use-filename-at-point t) ;; prefer file names near point
 (setq mac-option-modifier 'meta)
-(setq-default tab-width 8)
-(setq-default indent-tabs-mode 1)
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
 (setq-default fill-column 9999)
 ;; (setq-default fill-column 72)
@@ -149,43 +177,40 @@
 ;; map stuff ending in .com to the Unix conf-mode
 (add-to-list 'auto-mode-alist '("\\.com$" . conf-mode))
 
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
-;; smart tabs config
-;;(setq cua-auto-tabify-rectangles nil)
-;;(defadvice align (around smart-tabs activate)
-;;  (let ((indent-tabs-mode nil)) ad-do-it))
-;;(defadvice align-regexp (around smart-tabs activate)
-;;  (let ((indent-tabs-mode nil)) ad-do-it))
-;;(defadvice indent-relative (around smart-tabs activate)
-;;  (let ((indent-tabs-mode nil)) ad-do-it))
-;;(defadvice indent-according-to-mode (around smart-tabs activate)
-;;  (let ((indent-tabs-mode indent-tabs-mode))
-;;    (if (memq indent-line-function
-;; 	      '(indent-relative
-;; 		indent-relative-maybe))
-;; 	(setq indent-tabs-mode nil))
-;;    ad-do-it))
-;;(defmacro smart-tabs-advice (function offset)
-;;  `(progn
-;;     (defvaralias ',offset 'tab-width)
-;;     (defadvice ,function (around smart-tabs activate)
-;;       (cond
-;; 	(indent-tabs-mode
-;; 	 (save-excursion
-;; 	   (beginning-of-line)
-;; 	   (while (looking-at "\t*\\( +\\)\t+")
-;; 	     (replace-match "" nil nil nil 1)))
-;; 	 (setq tab-width tab-width)
-;; 	 (let ((tab-width fill-column)
-;; 	       (,offset fill-column)
-;; 	       (wstart (window-start)))
-;; 	   (unwind-protect
-;; 	       (progn ad-do-it)
-;; 	     (set-window-start (selected-window) wstart))))
-;; 	(t
-;; 	 ad-do-it)))))
-;;(smart-tabs-advice c-indent-line c-basic-offset)
-;;(smart-tabs-advice c-indent-region c-basic-offset)
+(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+
+(setq
+ helm-google-suggest-use-curl-p t
+ helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+ helm-quick-update t ; do not display invisible candidates
+ helm-idle-delay 0.01 ; be idle for this many seconds, before updating in delayed sources.
+ helm-input-idle-delay 0.01 ; be idle for this many seconds, before updating candidate buffer
+ helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+
+ helm-split-window-default-side 'other ;; open helm buffer in another window
+ helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+ helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+                                     '(picture-mode artist-mode))
+ helm-candidate-number-limit 200 ; limit the number of displayed canidates
+ helm-M-x-requires-pattern 0     ; show all candidates when set to 0
+ helm-ff-file-name-history-use-recentf t
+ helm-move-to-line-cycle-in-source t ; move to end or beginning of source
+                                        ; when reaching top or bottom of source.
+ ido-use-virtual-buffers t      ; Needed in helm-buffers-list
+ helm-buffers-fuzzy-matching t          ; fuzzy matching buffer names when non--nil
+                                        ; useful in helm-mini that lists buffers
+ )
+
+;; Save current position to mark ring when jumping to a different place
+(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+(helm-mode 1)
 
 (defun indent-buffer ()
   (interactive)
@@ -208,6 +233,7 @@
   (terminal-init-screen)
   )
 
+
 ;; *********************************************************
 ;; Stuff if you're not in a terminal
 ;; *********************************************************
@@ -223,27 +249,27 @@
   (add-to-list 'load-path (concat dotfiles-dir "/cedet"))
   (add-to-list 'load-path (concat dotfiles-dir "/cedet/common"))
   (add-to-list 'load-path (expand-file-name "cedet/common"))
-  (load-file "~/.emacs.d/cedet/common/cedet.el")
-  (global-ede-mode 1)                      ; Enable the Project management system
-  (semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
-  (global-srecode-minor-mode 1)            ; Enable template insertion menu
+  ;;(load-file "~/.emacs.d/cedet/common/cedet.el")
+  ;;(global-ede-mode 1)                      ; Enable the Project management system
+  ;;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
+;  (global-srecode-minor-mode 1)            ; Enable template insertion menu
   ;; * This enables the database and idle reparse engines
-  (semantic-load-enable-minimum-features)
+;  (semantic-load-enable-minimum-features)
   ;; * This enables some tools useful for coding, such as summary mode
   ;; * imenu support, and the semantic navigator
-  (semantic-load-enable-code-helpers)
+;  (semantic-load-enable-code-helpers)
   ;; * for elib support of java
-  (add-to-list 'load-path (expand-file-name "~/.emacs.d/jde/lisp"))
-  (setq load-path (append (list "/usr/local/share/emacs/site-lisp/elib") load-path))
+;  (add-to-list 'load-path (expand-file-name "~/.emacs.d/jde/lisp"))
+;  (setq load-path (append (list "/usr/local/share/emacs/site-lisp/elib") load-path))
   ;; * turn on cedit if you turn this on
-  (require 'jde)
+;  (require 'jde)
   ;; ecb
-  (add-to-list 'load-path (concat dotfiles-dir "/ecb"))
+;  (add-to-list 'load-path (concat dotfiles-dir "/ecb"))
   ;; * turn on cedit if you turn this on
-  (require 'ecb)
+;  (require 'ecb)
   (regen-autoloads)
   (load custom-file 'noerror)
-  (add-hook 'php-mode-user-hook 'semantic-default-java-setup)
+;  (add-hook 'php-mode-user-hook 'semantic-default-java-setup)
   ;; (ecb-activate)
   (defun sacha/increase-font-size ()
     (interactive)
@@ -329,3 +355,5 @@
   (no-windows)
 )
 
+;(global-set-key "\C-x\C-f" 'helm-for-files)
+;(global-set-key "\C-x f" 'helm-buffers-list)
