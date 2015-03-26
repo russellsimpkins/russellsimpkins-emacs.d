@@ -15,19 +15,17 @@
 
 ;; Load path etc.
 
-(setq dotfiles-dir (file-name-directory
-                    (or (buffer-file-name) load-file-name)))
-;;(setq dotfiles-dir '/Users/russellsimpkins/.emacs.d')
+;;(setq dotfiles-dir (file-name-directory
+;;                    (or (buffer-file-name) load-file-name)))
+(setq dotfiles-dir "/Users/202238/.emacs.d")
 (add-to-list 'load-path dotfiles-dir)
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
-(add-to-list 'load-path (concat dotfiles-dir "/feature-mode-0.4"))
 (add-to-list 'load-path (concat dotfiles-dir "/smarttabs"))
 (add-to-list 'load-path (concat dotfiles-dir "/puppet-syntax-emacs"))
 (add-to-list 'load-path (concat dotfiles-dir "/yaml-mode"))
-(add-to-list 'load-path (concat dotfiles-dir "/helm"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa/magit-0.8.1"))
 
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
@@ -71,7 +69,6 @@
 (require 'php-mode)
 (require 'tramp)
 (require 'go-mode)
-(require 'feature-mode)
 ;;(require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'puppet-mode)
@@ -80,11 +77,11 @@
 ;; must set before helm-config,  otherwise helm use default
 ;; prefix "C-x c", which is inconvenient because you can
 ;; accidentially pressed "C-x C-c"
-(setq helm-command-prefix-key "C-c h")
-(require 'helm-config)
-(require 'helm-eshell)
-(require 'helm-files)
-(require 'helm-grep)
+;;(setq helm-command-prefix-key "C-c h")
+;;(require 'helm-config)
+;;(require 'helm-eshell)
+;;(require 'helm-files)
+;;(require 'helm-grep)
 
 
 
@@ -103,7 +100,7 @@
 (setq tramp-default-method "scp")
 (add-to-list 'auto-mode-alist '("\\.pp$". puppet-mode))
 ;;(autoload 'js2-mode "js2" nil t)
-;;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode))
 ;;(require 'php-mode)
 ;;(require 'php-electric)
 ;;(add-hook 'php-mode-hook '(lambda () (php-electric-mode)))
@@ -151,6 +148,8 @@
 					; add key code to beautify javascript
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
+(global-set-key (kbd "C-x p") 'magit-push)
+
 ;;(setq ac-quick-help-delay 3)
 (setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
@@ -163,6 +162,7 @@
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
+(setq-default js-indent-level 2)
 (setq-default fill-column 9999)
 ;; (setq-default fill-column 72)
 ;; let emacs find <> as well balanced parens as [] and () are
@@ -177,13 +177,13 @@
 ;; map stuff ending in .com to the Unix conf-mode
 (add-to-list 'auto-mode-alist '("\\.com$" . conf-mode))
 
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+;;(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+;;(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+;;(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
-(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+;;(define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+;;(define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+;;(define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
 
 (setq
  helm-google-suggest-use-curl-p t
@@ -195,8 +195,11 @@
 
  helm-split-window-default-side 'other ;; open helm buffer in another window
  helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
- helm-buffers-favorite-modes (append helm-buffers-favorite-modes
-                                     '(picture-mode artist-mode))
+
+
+;; helm-buffers-favorite-modes (append helm-buffers-favorite-modes
+ ;;                                     '(picture-mode artist-mode))
+ 
  helm-candidate-number-limit 200 ; limit the number of displayed canidates
  helm-M-x-requires-pattern 0     ; show all candidates when set to 0
  helm-ff-file-name-history-use-recentf t
@@ -208,9 +211,9 @@
  )
 
 ;; Save current position to mark ring when jumping to a different place
-(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+;;(add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
-(helm-mode 1)
+;;(helm-mode 1)
 
 (defun indent-buffer ()
   (interactive)
