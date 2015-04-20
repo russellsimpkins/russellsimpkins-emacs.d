@@ -15,9 +15,9 @@
  '(ecb-tip-of-the-day nil)
  '(exec-path (quote ("/usr/bin" "/bin" "/usr/sbin" "/sbin" "/Applications/Emacs.app/Contents/MacOS/bin" "/usr/local/go/bin" "/usr/local/bin")))
  '(global-hl-line-mode nil)
- '(global-semantic-show-parser-state-mode t nil (semantic-util-modes))
- '(global-semantic-show-unmatched-syntax-mode nil nil (semantic-util-modes))
- '(global-semantic-stickyfunc-mode nil nil (semantic-util-modes))
+;; '(global-semantic-show-parser-state-mode t nil (semantic-util-modes))
+;; '(global-semantic-show-unmatched-syntax-mode nil nil (semantic-util-modes))
+;; '(global-semantic-stickyfunc-mode nil nil (semantic-util-modes))
  '(hl-line-sticky-flag nil)
  '(ispell-program-name "/usr/local/bin/aspell")
  '(majmodpri-no-nxml t)
@@ -27,6 +27,7 @@
  '(semantic-lex-debug-analyzers t)
  '(senator-search-ignore-tag-classes (quote (code block))))
 (custom-set-faces
+ 
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.

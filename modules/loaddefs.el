@@ -3,11 +3,11 @@
 ;;; Code:
 
 
-;;;### (autoloads nil "elpa-to-submit/cheat" "elpa-to-submit/cheat.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (cheat) "cheat" "elpa-to-submit/cheat.el" (20348
+;;;;;;  61030))
 ;;; Generated autoloads from elpa-to-submit/cheat.el
 
-(autoload 'cheat "elpa-to-submit/cheat" "\
+(autoload 'cheat "cheat" "\
 Show the specified cheat sheet.
 
 If SILENT is non-nil then do not print any output, but return it
@@ -17,13 +17,13 @@ as a string instead.
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/cperl-mode" "elpa-to-submit/cperl-mode.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (cperl-perldoc-at-point cperl-perldoc cperl-mode)
+;;;;;;  "cperl-mode" "elpa-to-submit/cperl-mode.el" (20348 61030))
 ;;; Generated autoloads from elpa-to-submit/cperl-mode.el
 
 (fset 'perl-mode 'cperl-mode)
 
-(autoload 'cperl-mode "elpa-to-submit/cperl-mode" "\
+(autoload 'cperl-mode "cperl-mode" "\
 Major mode for editing Perl code.
 Expression and list commands understand all C brackets.
 Tab indents for Perl code.
@@ -200,12 +200,12 @@ or as help on variables `cperl-tips', `cperl-problems',
 
 \(fn)" t nil)
 
-(autoload 'cperl-perldoc "elpa-to-submit/cperl-mode" "\
+(autoload 'cperl-perldoc "cperl-mode" "\
 Run `perldoc' on WORD.
 
 \(fn WORD)" t nil)
 
-(autoload 'cperl-perldoc-at-point "elpa-to-submit/cperl-mode" "\
+(autoload 'cperl-perldoc-at-point "cperl-mode" "\
 Run a `perldoc' on the word around point.
 
 \(fn)" t nil)
@@ -214,11 +214,11 @@ Run a `perldoc' on the word around point.
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/erc-highlight-nicknames" "elpa-to-submit/erc-highlight-nicknames.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (erc-highlight-nicknames) "erc-highlight-nicknames"
+;;;;;;  "elpa-to-submit/erc-highlight-nicknames.el" (20348 61030))
 ;;; Generated autoloads from elpa-to-submit/erc-highlight-nicknames.el
 
-(autoload 'erc-highlight-nicknames "elpa-to-submit/erc-highlight-nicknames" "\
+(autoload 'erc-highlight-nicknames "erc-highlight-nicknames" "\
 Searches for nicknames and highlights them. Uses the first
 twelve digits of the MD5 message digest of the nickname as
 color (#rrrrggggbbbb).
@@ -227,11 +227,11 @@ color (#rrrrggggbbbb).
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/espresso" "elpa-to-submit/espresso.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (espresso-mode) "espresso" "elpa-to-submit/espresso.el"
+;;;;;;  (20348 61030))
 ;;; Generated autoloads from elpa-to-submit/espresso.el
 
-(autoload 'espresso-mode "elpa-to-submit/espresso" "\
+(autoload 'espresso-mode "espresso" "\
 Major mode for editing JavaScript source text.
 
 Key bindings:
@@ -242,11 +242,12 @@ Key bindings:
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/htmlize" "elpa-to-submit/htmlize.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (htmlize-many-files-dired htmlize-many-files htmlize-file
+;;;;;;  htmlize-region htmlize-buffer) "htmlize" "elpa-to-submit/htmlize.el"
+;;;;;;  (20348 61030))
 ;;; Generated autoloads from elpa-to-submit/htmlize.el
 
-(autoload 'htmlize-buffer "elpa-to-submit/htmlize" "\
+(autoload 'htmlize-buffer "htmlize" "\
 Convert BUFFER to HTML, preserving colors and decorations.
 
 The generated HTML is available in a new buffer, which is returned.
@@ -262,13 +263,13 @@ that created them, or simply alter the faces it uses.
 
 \(fn &optional BUFFER)" t nil)
 
-(autoload 'htmlize-region "elpa-to-submit/htmlize" "\
+(autoload 'htmlize-region "htmlize" "\
 Convert the region to HTML, preserving colors and decorations.
 See `htmlize-buffer' for details.
 
 \(fn BEG END)" t nil)
 
-(autoload 'htmlize-file "elpa-to-submit/htmlize" "\
+(autoload 'htmlize-file "htmlize" "\
 Load FILE, fontify it, convert it to HTML, and save the result.
 
 Contents of FILE are inserted into a temporary buffer, whose major mode
@@ -287,7 +288,7 @@ does not name a directory, it will be used as output file name.
 
 \(fn FILE &optional TARGET)" t nil)
 
-(autoload 'htmlize-many-files "elpa-to-submit/htmlize" "\
+(autoload 'htmlize-many-files "htmlize" "\
 Convert FILES to HTML and save the corresponding HTML versions.
 
 FILES should be a list of file names to convert.  This function calls
@@ -301,29 +302,29 @@ corresponding source file.
 
 \(fn FILES &optional TARGET-DIRECTORY)" t nil)
 
-(autoload 'htmlize-many-files-dired "elpa-to-submit/htmlize" "\
+(autoload 'htmlize-many-files-dired "htmlize" "\
 HTMLize dired-marked files.
 
 \(fn ARG &optional TARGET-DIRECTORY)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/javadoc-help" "elpa-to-submit/javadoc-help.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (javadoc-lookup) "javadoc-help" "elpa-to-submit/javadoc-help.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/javadoc-help.el
 
-(autoload 'javadoc-lookup "elpa-to-submit/javadoc-help" "\
+(autoload 'javadoc-lookup "javadoc-help" "\
 Look up Java class in Javadoc.
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/markdown-mode" "elpa-to-submit/markdown-mode.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (markdown-mode) "markdown-mode" "elpa-to-submit/markdown-mode.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/markdown-mode.el
 
-(autoload 'markdown-mode "elpa-to-submit/markdown-mode" "\
+(autoload 'markdown-mode "markdown-mode" "\
 Major mode for editing Markdown files.
 
 \(fn)" t nil)
@@ -334,11 +335,11 @@ Major mode for editing Markdown files.
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/moz" "elpa-to-submit/moz.el"
-;;;;;;  (21767 25170 0 0))
+;;;### (autoloads (moz-minor-mode) "moz" "elpa-to-submit/moz.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/moz.el
 
-(autoload 'moz-minor-mode "elpa-to-submit/moz" "\
+(autoload 'moz-minor-mode "moz" "\
 Toggle Mozilla mode.
 With no argument, this command toggles the mode.
 Non-null prefix argument turns on the mode.
@@ -355,16 +356,18 @@ started as needed).
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/oddmuse" "elpa-to-submit/oddmuse.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (oddmuse-kill-url oddmuse-browse-this-page oddmuse-browse-page
+;;;;;;  emacswiki-post oddmuse-insert-pagename oddmuse-revert oddmuse-post
+;;;;;;  oddmuse-follow oddmuse-edit oddmuse-toggle-minor) "oddmuse"
+;;;;;;  "elpa-to-submit/oddmuse.el" (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/oddmuse.el
 
-(autoload 'oddmuse-toggle-minor "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-toggle-minor "oddmuse" "\
 Toggle minor mode state.
 
 \(fn &optional ARG)" t nil)
 
-(autoload 'oddmuse-edit "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-edit "oddmuse" "\
 Edit a page on a wiki.
 WIKI is the name of the wiki as defined in `oddmuse-wikis',
 PAGENAME is the pagename of the page you want to edit.
@@ -372,29 +375,29 @@ Use a prefix argument to force a reload of the page.
 
 \(fn WIKI PAGENAME)" t nil)
 
-(autoload 'oddmuse-follow "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-follow "oddmuse" "\
 Figure out what page we need to visit
 and call `oddmuse-edit' on it.
 
 \(fn ARG)" t nil)
 
-(autoload 'oddmuse-post "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-post "oddmuse" "\
 Post the current buffer to the current wiki.
 The current wiki is taken from `oddmuse-wiki'.
 
 \(fn SUMMARY)" t nil)
 
-(autoload 'oddmuse-revert "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-revert "oddmuse" "\
 Revert this oddmuse page.
 
 \(fn)" t nil)
 
-(autoload 'oddmuse-insert-pagename "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-insert-pagename "oddmuse" "\
 Insert a PAGENAME of current wiki with completion.
 
 \(fn PAGENAME)" t nil)
 
-(autoload 'emacswiki-post "elpa-to-submit/oddmuse" "\
+(autoload 'emacswiki-post "oddmuse" "\
 Post the current buffer to the EmacsWiki.
 If this command is invoked interactively: with prefix argument, prompts pagename,
 otherwise set pagename as basename of `buffer-file-name'.
@@ -403,30 +406,30 @@ This command is intended to post current EmacsLisp program easily.
 
 \(fn &optional PAGENAME SUMMARY)" t nil)
 
-(autoload 'oddmuse-browse-page "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-browse-page "oddmuse" "\
 Ask a WWW browser to load an oddmuse page.
 WIKI is the name of the wiki as defined in `oddmuse-wikis',
 PAGENAME is the pagename of the page you want to browse.
 
 \(fn WIKI PAGENAME)" t nil)
 
-(autoload 'oddmuse-browse-this-page "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-browse-this-page "oddmuse" "\
 Ask a WWW browser to load current oddmuse page.
 
 \(fn)" t nil)
 
-(autoload 'oddmuse-kill-url "elpa-to-submit/oddmuse" "\
+(autoload 'oddmuse-kill-url "oddmuse" "\
 Make the URL of current oddmuse page the latest kill in the kill ring.
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/paredit" "elpa-to-submit/paredit.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (paredit-mode) "paredit" "elpa-to-submit/paredit.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/paredit.el
 
-(autoload 'paredit-mode "elpa-to-submit/paredit" "\
+(autoload 'paredit-mode "paredit" "\
 Minor mode for pseudo-structurally editing Lisp code.
 With a prefix argument, enable Paredit Mode even if there are
   imbalanced parentheses in the buffer.
@@ -439,61 +442,60 @@ Paredit behaves badly if parentheses are imbalanced, so exercise
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/pcmpl-rake" "elpa-to-submit/pcmpl-rake.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (pcomplete/rake) "pcmpl-rake" "elpa-to-submit/pcmpl-rake.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/pcmpl-rake.el
 
-(autoload 'pcomplete/rake "elpa-to-submit/pcmpl-rake" "\
+(autoload 'pcomplete/rake "pcmpl-rake" "\
 Completion rules for the `ssh' command.
 
 \(fn)" nil nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/perl-find-library" "elpa-to-submit/perl-find-library.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (perl-find-file perldoc) "perl-find-library" "elpa-to-submit/perl-find-library.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/perl-find-library.el
 
-(autoload 'perldoc "elpa-to-submit/perl-find-library" "\
+(autoload 'perldoc "perl-find-library" "\
 Invoke `cperl-perldoc' on LIBRARY, but do completion using *PERL-LIBRARIES*
 when run interactively
 
 \(fn LIBRARY)" t nil)
 
-(autoload 'perl-find-file "elpa-to-submit/perl-find-library" "\
+(autoload 'perl-find-file "perl-find-library" "\
 Find a perl library by module name
 
 \(fn LIBRARY)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/pod-mode" "elpa-to-submit/pod-mode.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (pod-mode) "pod-mode" "elpa-to-submit/pod-mode.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/pod-mode.el
 
-(autoload 'pod-mode "elpa-to-submit/pod-mode" "\
+(autoload 'pod-mode "pod-mode" "\
 Major mode for editing POD files (Plain Old Documentation for Perl).
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/ri" "elpa-to-submit/ri.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (ri) "ri" "elpa-to-submit/ri.el" (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/ri.el
 
-(autoload 'ri "elpa-to-submit/ri" "\
+(autoload 'ri "ri" "\
 Look up Ruby documentation.
 
 \(fn &optional RI-DOCUMENTED)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/ruby-electric" "elpa-to-submit/ruby-electric.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (ruby-electric-mode) "ruby-electric" "elpa-to-submit/ruby-electric.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/ruby-electric.el
 
-(autoload 'ruby-electric-mode "elpa-to-submit/ruby-electric" "\
+(autoload 'ruby-electric-mode "ruby-electric" "\
 Toggle Ruby Electric minor mode.
 With no argument, this command toggles the mode.  Non-null prefix
 argument turns on the mode.  Null prefix argument turns off the
@@ -510,27 +512,27 @@ strings. Note that you must have Font Lock enabled.
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/scpaste" "elpa-to-submit/scpaste.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (scpaste-region scpaste) "scpaste" "elpa-to-submit/scpaste.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/scpaste.el
 
-(autoload 'scpaste "elpa-to-submit/scpaste" "\
+(autoload 'scpaste "scpaste" "\
 Paste the current buffer via `scp' to `scpaste-http-destination'.
 
 \(fn ORIGINAL-NAME)" t nil)
 
-(autoload 'scpaste-region "elpa-to-submit/scpaste" "\
+(autoload 'scpaste-region "scpaste" "\
 Paste the current region via `scpaste'.
 
 \(fn NAME)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/textile-mode" "elpa-to-submit/textile-mode.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (textile-mode) "textile-mode" "elpa-to-submit/textile-mode.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/textile-mode.el
 
-(autoload 'textile-mode "elpa-to-submit/textile-mode" "\
+(autoload 'textile-mode "textile-mode" "\
 A major mode for editing textile files.
 
 \(fn)" t nil)
@@ -539,33 +541,33 @@ A major mode for editing textile files.
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/tt-mode" "elpa-to-submit/tt-mode.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (tt-mode) "tt-mode" "elpa-to-submit/tt-mode.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/tt-mode.el
 
-(autoload 'tt-mode "elpa-to-submit/tt-mode" "\
+(autoload 'tt-mode "tt-mode" "\
 Major mode for editing Template Toolkit files
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/twilight" "elpa-to-submit/twilight.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (color-theme-twilight) "twilight" "elpa-to-submit/twilight.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/twilight.el
 
-(autoload 'color-theme-twilight "elpa-to-submit/twilight" "\
+(autoload 'color-theme-twilight "twilight" "\
 Color theme by Marcus Crafter, based off the TextMate Twilight theme, created 2008-04-18
 
 \(fn)" t nil)
 
 ;;;***
 
-;;;### (autoloads nil "elpa-to-submit/zenburn" "elpa-to-submit/zenburn.el"
-;;;;;;  (21767 25171 0 0))
+;;;### (autoloads (color-theme-zenburn) "zenburn" "elpa-to-submit/zenburn.el"
+;;;;;;  (20348 61031))
 ;;; Generated autoloads from elpa-to-submit/zenburn.el
 
-(autoload 'color-theme-zenburn "elpa-to-submit/zenburn" "\
+(autoload 'color-theme-zenburn "zenburn" "\
 Just some alien fruit salad to keep you in the zone.
 
 \(fn)" t nil)
@@ -577,7 +579,7 @@ Just some alien fruit salad to keep you in the zone.
 ;;;### (autoloads nil nil ("elpa-to-submit/blackboard.el" "elpa-to-submit/cl-lib-0.4.el"
 ;;;;;;  "elpa-to-submit/cl-lib.el" "elpa-to-submit/color-theme.el"
 ;;;;;;  "elpa-to-submit/eshell-vc.el" "elpa-to-submit/notify.el")
-;;;;;;  (21813 16071 552627 0))
+;;;;;;  (21267 26788 909303))
 
 ;;;***
 

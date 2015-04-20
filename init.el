@@ -1,4 +1,4 @@
-;;; init.el --- Where all the magic begins
+;; init.el --- Where all the magic begins
 ;;
 ;; Part of the Emacs Starter Kit
 ;;
@@ -17,9 +17,9 @@
 
 ;;(setq dotfiles-dir (file-name-directory
 ;;                    (or (buffer-file-name) load-file-name)))
-(setq dotfiles-dir "/Users/202238/.emacs.d")
-(add-to-list 'load-path dotfiles-dir)
-(add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
+(setq dotfiles-dir "/Users/202238/.emacs.d/")
+;;(add-to-list 'load-path dotfiles-dir)
+(add-to-list 'load-path (concat dotfiles-dir "/modules"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit/jabber"))
 (add-to-list 'load-path (concat dotfiles-dir "/http-post"))
 (add-to-list 'load-path (concat dotfiles-dir "/tests"))
@@ -27,6 +27,7 @@
 (add-to-list 'load-path (concat dotfiles-dir "/puppet-syntax-emacs"))
 (add-to-list 'load-path (concat dotfiles-dir "/yaml-mode"))
 (add-to-list 'load-path (concat dotfiles-dir "/elpa/magit-0.8.1"))
+(add-to-list 'load-path (concat dotfiles-dir "/elpa-to-submit"))
 
 (setq autoload-file (concat dotfiles-dir "loaddefs.el"))
 (setq package-user-dir (concat dotfiles-dir "elpa"))
@@ -34,6 +35,7 @@
 
 ;; These should be loaded on startup rather than autoloaded on demand
 ;; since they are likely to be used in every session
+
 
 (require 'cl)
 (require 'saveplace)
@@ -51,6 +53,7 @@
 ;; Load up ELPA, the package manager
 (require 'package)
 (package-initialize)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (require 'starter-kit-elpa)
 
 ;; Load up starter kit customizations
@@ -68,8 +71,11 @@
 (require 'js-beautify)
 (require 'php-mode)
 (require 'tramp)
+(setq gofmt-command "/Users/202238/projects/go-projects/bin/goimports")
+(require 'go-mode-load)
+(add-hook 'before-save-hook 'gofmt-before-save)
 (require 'go-mode)
-;;(require 'go-autocomplete)
+(require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'puppet-mode)
 
@@ -83,15 +89,6 @@
 ;;(require 'helm-files)
 ;;(require 'helm-grep)
 
-
-
-
-
-
-
-
-
-
 ;; smart tabs
 ;;(require 'smart-tabs-mode)
 ;;(smart-tabs-insinuate 'c 'javascript 'c++)
@@ -101,7 +98,8 @@
 (add-to-list 'auto-mode-alist '("\\.pp$". puppet-mode))
 ;;(autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode))
-;;(require 'php-mode)
+(add-to-list 'auto-mode-alist '("\\.play$" . yaml-mode))
+(require 'php-mode)
 ;;(require 'php-electric)
 ;;(add-hook 'php-mode-hook '(lambda () (php-electric-mode)))
 
@@ -148,8 +146,9 @@
 					; add key code to beautify javascript
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-(global-set-key (kbd "C-x p") 'magit-push)
 
+(global-set-key (kbd "C-x p") 'magit-push)
+(global-set-key (kbd "C-x m") 'maximize-frame)                
 ;;(setq ac-quick-help-delay 3)
 (setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
@@ -360,3 +359,5 @@
 
 ;(global-set-key "\C-x\C-f" 'helm-for-files)
 ;(global-set-key "\C-x f" 'helm-buffers-list)
+
+
