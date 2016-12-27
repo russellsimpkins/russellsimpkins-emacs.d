@@ -33,6 +33,7 @@
 (setq package-user-dir (concat dotfiles-dir "elpa"))
 (setq custom-file (concat dotfiles-dir "custom.el"))
 
+
 ;; These should be loaded on startup rather than autoloaded on demand
 ;; since they are likely to be used in every session
 
@@ -74,13 +75,18 @@
 (setq gofmt-command "/Users/202238/projects/go-projects/bin/goimports")
 (require 'go-mode-load)
 (add-hook 'before-save-hook 'gofmt-before-save)
+;(remove-hook 'before-save-hook 'gofmt-before-save)
 (require 'go-mode)
 (require 'go-autocomplete)
 (require 'auto-complete-config)
 (require 'puppet-mode)
+(require 'env-var-import)
 
+(defun go-mode-setup ()
+  (go-eldoc-setup))
+(add-hook 'go-mode-hook 'go-mode-setup)
 
-;; must set before helm-config,  otherwise helm use default
+;; must set before helm-config, otherwise helm use default
 ;; prefix "C-x c", which is inconvenient because you can
 ;; accidentially pressed "C-x C-c"
 ;;(setq helm-command-prefix-key "C-c h")
@@ -96,17 +102,10 @@
 (ac-config-default)
 (setq tramp-default-method "scp")
 (add-to-list 'auto-mode-alist '("\\.pp$". puppet-mode))
-;;(autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode))
 (add-to-list 'auto-mode-alist '("\\.play$" . yaml-mode))
 (require 'php-mode)
-;;(require 'php-electric)
-;;(add-hook 'php-mode-hook '(lambda () (php-electric-mode)))
 
-;;(require 'php-mode)
-;;(eval-after-load "sql"
-;;   '(load-library "tsql-indent"))
-;; You can keep system- or user-specific customizations here
 (setq system-specific-config (concat dotfiles-dir system-name ".el")
       user-specific-config (concat dotfiles-dir user-login-name ".el")
       user-specific-dir (concat dotfiles-dir user-login-name))
@@ -130,6 +129,8 @@
 (global-set-key (kbd "C-x }") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-x {") 'shrink-window-horizontally)
 (global-set-key (kbd "C-x +") 'balance-windows)
+(global-set-key (kbd "C-x u") 'cua-mode)
+
 					; search replace
 (global-set-key (kbd "C-x C-g") 'query-replace)
 (global-set-key (kbd "C-x C-z") 'query-replace-regexp)
@@ -148,7 +149,7 @@
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
 
 (global-set-key (kbd "C-x p") 'magit-push)
-(global-set-key (kbd "C-x m") 'maximize-frame)                
+(global-set-key (kbd "C-x m") 'maximize-frame)
 ;;(setq ac-quick-help-delay 3)
 (setq scroll-preserve-screen-position t)
 (setq ido-enable-flex-matching t)
@@ -158,15 +159,18 @@
 (setq ido-show-dot-for-dired t) ;; put . as the first item
 (setq ido-use-filename-at-point t) ;; prefer file names near point
 (setq mac-option-modifier 'meta)
+
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
 (setq-default js-indent-level 2)
 (setq-default fill-column 9999)
 ;; (setq-default fill-column 72)
+;; (standard-display-ascii ?\t "^I") ;; show tabs as ^I
+;; (standard-display-ascii ?\t " ")
 ;; let emacs find <> as well balanced parens as [] and () are
 (modify-syntax-entry ?> "(<")
-		     (modify-syntax-entry ?< ")>")
+(modify-syntax-entry ?< ")>")
 ;;; init.el ends here
 
 (column-number-mode 1)
@@ -244,7 +248,7 @@
   ;;(require 'autofit-frame)
   (require 'frame-cmds)
   (require 'ansi-color)
-  
+
   (menu-bar-mode 1)
   (tool-bar-mode 0)
   ;; cedet
@@ -292,40 +296,38 @@
   (global-set-key (kbd "C--") 'sacha/decrease-font-size)
 					;  (global-set-key (kbd "C-+") 'text-scale-increase)
 					;  (global-set-key (kbd "C--") 'text-scale-decrease)
-  
+
   (require 'color-theme)
-  (defun color-theme-djcb-dark ()
-    "dark color theme created by djcb, Jan. 2009."
-    (interactive)
-    (color-theme-install
-     '(color-theme-djcb-dark
-       ((foreground-color . "#a9eadf")
-	(background-color . "black") 
-	(background-mode . dark))
-       (bold ((t (:bold t))))
-       (bold-italic ((t (:italic t :bold t))))
-       (default ((t (nil))))
-       (font-lock-builtin-face ((t (:italic t :foreground "#a96da0"))))
-       (font-lock-comment-face ((t (:italic t :foreground "#bbbbbb"))))
-       (font-lock-comment-delimiter-face ((t (:foreground "#666666"))))
-       (font-lock-constant-face ((t (:bold t :foreground "#197b6e"))))
-       (font-lock-doc-string-face ((t (:foreground "#3041c4"))))
-       (font-lock-doc-face ((t (:foreground "gray"))))
-       (font-lock-reference-face ((t (:foreground "white"))))
-       (font-lock-function-name-face ((t (:foreground "#356da0"))))
-       (font-lock-keyword-face ((t (:bold t :foreground "#bcf0f1"))))
-       (font-lock-preprocessor-face ((t (:foreground "#e3ea94"))))
-       (font-lock-string-face ((t (:foreground "#ffffff"))))
-       (font-lock-type-face ((t (:bold t :foreground "#364498"))))
-       (font-lock-variable-name-face ((t (:foreground "#7685de"))))
-       (font-lock-warning-face ((t (:bold t :italic nil :underline nil 
-					  :foreground "yellow"))))
-       (hl-line ((t (:background "#112233"))))
-       (mode-line ((t (:foreground "#ffffff" :background "#333333"))))
-       (region ((t (:foreground nil :background "#555555"))))
-       (show-paren-match-face ((t (:bold t :foreground "#ffffff" 
-					 :background "#050505")))))))
-  (setq my-color-themes (list 'color-theme-billw 'color-theme-jsc-dark 
+  (defun my:resize-window (&optional arg)    ; Original by Hirose Yuuji and Bob Wiener
+  "*Resize window interactively."
+  (interactive "p")
+  (if (one-window-p) (error "Cannot resize sole window"))
+  (or arg (setq arg 1))
+  (let (c)
+    (catch 'done
+      (while t
+    (message
+     "w=heighten, s=shrink, d=widen, a=narrow (by %d);  1-9=unit, q=quit"
+     arg)
+    (setq c (read-char))
+    (condition-case ()
+        (cond
+         ((= c ?w) (enlarge-window arg))
+         ((= c ?s) (shrink-window arg))
+         ((= c ?d) (enlarge-window-horizontally arg))
+         ((= c ?a) (shrink-window-horizontally arg))
+         ((= c ?o) (other-window 1))
+         ((= c ?p) (other-window -1))
+         ((= c ?\^G) (keyboard-quit))
+         ((= c ?q) (throw 'done t))
+         ((and (> c ?0) (<= c ?9)) (setq arg (- c ?0)))
+         (t (beep)))
+      (error (beep)))))
+    (message "Done.")))
+  (global-set-key (kbd "C-c w") 'my:resize-window)
+
+
+  (setq my-color-themes (list 'color-theme-billw 'color-theme-jsc-dark
 			      'color-theme-sitaramv-solaris 'color-theme-resolve
 			      'color-theme-classic 'color-theme-jonadabian-slate
 			      'color-theme-kingsajz 'color-theme-shaman
@@ -347,8 +349,7 @@
   (set-face-attribute 'default
 		      nil
 		      :height 180)
-  (maximize-frame)
-  )
+  (maximize-frame))
 
 
 

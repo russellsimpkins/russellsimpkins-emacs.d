@@ -426,16 +426,16 @@ Make the URL of current oddmuse page the latest kill in the kill ring.
 ;;;;;;  (21767 25171 0 0))
 ;;; Generated autoloads from elpa-to-submit/paredit.el
 
-(autoload 'paredit-mode "elpa-to-submit/paredit" "\
-Minor mode for pseudo-structurally editing Lisp code.
-With a prefix argument, enable Paredit Mode even if there are
-  imbalanced parentheses in the buffer.
-Paredit behaves badly if parentheses are imbalanced, so exercise
-  caution when forcing Paredit Mode to be enabled, and consider
-  fixing imbalanced parentheses instead.
-\\<paredit-mode-map>
-
-\(fn &optional ARG)" t nil)
+;(autoload 'paredit-mode "elpa-to-submit/paredit" "\
+;Minor mode for pseudo-structurally editing Lisp code.
+;With a prefix argument, enable Paredit Mode even if there are
+;  imbalanced parentheses in the buffer.
+;Paredit behaves badly if parentheses are imbalanced, so exercise
+;  caution when forcing Paredit Mode to be enabled, and consider
+;  fixing imbalanced parentheses instead.
+;\\<paredit-mode-map>
+;
+;\(fn &optional ARG)" t nil)
 
 ;;;***
 
